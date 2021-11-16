@@ -148,55 +148,6 @@ SEND_CMD(0x01);     //Borra LCD
     Write_Byte_To_DS1307_RTC(0,0); //segundos
 }
 
-void main(void) {
-    char Car;
-        
-    MCU_Init();
-    LCD_Init();
-    UART_Init();
-    InitI2C();	
-    
-    EscribeCadenaLCD(" MPEI 2020-i + I2C  ");
-    
-    SEND_CMD(0x80+64); //pasa a la segunda linea
-    EscribeCadenaLCD(" +++ RTC DS1307 +++ ");
-    
-    SEND_CMD(0x80+20); //pasa a la tercera linea  //1001 0100
-    EscribeCadenaLCD("LECTURA Y ESCRITURA ");
-    
-    SEND_CMD(0x80+84); //pasa a la cuarta linea  1101 0100
-    EscribeCadenaLCD("DEL MODULO RTC :... ");
-    
-    SEND_CMD(1);        //borra la LCD
-    
-    while(1)
-    {
-    SEND_CMD(0x80+0); //pasa a 1a linea 1, col 1
-    
-    Car=Read_Byte_From_DS1307_RTC(2);
     SEND_CHAR(((Car>>4)&0x0F)+0x30);
-    SEND_CHAR((Car&0x0F)+0x30);
-    
-    SEND_CHAR(':');
-    
-    Car=Read_Byte_From_DS1307_RTC(1);
-    SEND_CHAR(((Car>>4)&0x0F)+0x30);
-    SEND_CHAR((Car&0x0F)+0x30);
-    
-    SEND_CHAR(':');
-    
-    Car=Read_Byte_From_DS1307_RTC(0);
-    SEND_CHAR(((Car>>4)&0x0F)+0x30);
-    SEND_CHAR((Car&0x0F)+0x30);
-    
-    if(PIR1bits.RCIF==1) 
-            {
-                Car=RCREG;          //captura dato del UART
-                PIR1bits.RCIF=0;    //borra bandera UART recibió
-                if(Car=='H') RecibeHHMM();
-            }
-    
-     __delay_ms(1000);
-      
-    }
-}
+void main(void) {}
+   
