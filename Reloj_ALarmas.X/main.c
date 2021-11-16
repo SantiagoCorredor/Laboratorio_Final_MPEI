@@ -1,10 +1,11 @@
 /*
  * File:   main.c
- * Author: Danilo A Garcia H
+ * Author: Andreina y santiago
  *
- * Created on 14 de julio de 2020, 12:46 AM
+ * Created on 16 november 2021, 12:46 AM
  */
 // HOLA MUNDO, ESTOY HACIENDO UN CAMBIO A LA NUBE DE TRABAJO
+// HOLA hola
 
 // CONFIG
 #pragma config FOSC = XT        // Oscillator Selection bits (XT oscillator)
