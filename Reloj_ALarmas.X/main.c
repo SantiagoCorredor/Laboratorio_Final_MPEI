@@ -21,13 +21,15 @@
 #define _XTAL_FREQ 4000000
 
 #include <xc.h>
-#include "I2C.c"
-#include "DS1307.c"
-
+#include "I2C.h"
+#include "DS1307.h"
 
 #define RS PORTCbits.RC0
 #define E  PORTCbits.RC2
 #define RW PORTCbits.RC1
+#define SCL PORTCbits.RC3
+#define SDA PORTCbits.RC4
+#define Buzz PORTCbits.RC5
 #define LCD PORTB
 
 void SEND_CMD(char dato)
@@ -59,10 +61,16 @@ void LCD_Init()   //ver página 24 manual HD44780
     SEND_CMD(0x01); //Borra LCD
 }
 
-void EscribeCadenaLCD(const char *s)
+void SEND_MSJ(char POS, char *Msj)
 {
-	while(*s)
-		SEND_CHAR(*s++);   // envía al LCD mientras no NULL 
+    char carac;
+    SEND_CMD(POS);
+    while(*Msj!=0x00){
+        carac=(char)*Msj;
+        SEND_CHAR(carac);
+        Msj++;
+    }
+    return;
 }
 
 
@@ -78,8 +86,9 @@ void UART_Init()
 
 void MCU_Init()
 {
-    TRISC=0xF8; //RS RW E DE SALIDA
-    TRISB=0X00; //TODO EL PUERTO PARA LCD DE SALIDA
+    TRISC=0x19; //RS RW E DE SALIDA
+    TRISB=0x00; //TODO EL PUERTO PARA LCD DE SALIDA
+    TRISD=0x0F;
 }
 
 void SEND_Tx(char dato)
@@ -147,8 +156,72 @@ SEND_CMD(0x01);     //Borra LCD
     Write_Byte_To_DS1307_RTC(2,(Datos[3]<<4)+(Datos[2]&0x0F)); //horas
     Write_Byte_To_DS1307_RTC(1,(Datos[1]<<4)+(Datos[0]&0x0F) ); //minutos
     Write_Byte_To_DS1307_RTC(0,0); //segundos
+    SEND_CHAR(((Car>>4)&0x0F)+0x30);
+}
+char TECLADO(){
+    char Tecla = 1;
+    char VPTOD = 0x0E; //0000 1110
+    
+    do
+    {
+        PORTD = VPTOD;
+        if (PORTDbits.RD4 == 0) goto Antirrebote;
+        Tecla++;
+        if (PORTDbits.RD5 == 0) goto Antirrebote;
+        Tecla++;
+        if (PORTDbits.RD7 == 0) goto Antirrebote;
+        Tecla++;
+        VPTOD = (VPTOD << 1) | 1;
+  
+    } 
+    while (Tecla < 17);
+    return 0;
+
+    Antirrebote:
+    while(PORTDbits.RD4 == 0) {};
+    while(PORTDbits.RD5 == 0) {};
+    while(PORTDbits.RD6 == 0) {};
+    while(PORTDbits.RD7 == 0) {};
+    __delay_ms(100);
+    switch(Tecla){
+        case 1:
+            return '7';
+        case 2:
+            return '8';
+        case 3:
+            return '9';
+        case 4:
+            return 0x0A;
+        case 5:
+            return '4';
+        case 6:
+            return '5';
+            break;
+        case 7:
+            return '6';
+        case 8:
+            return 0x0B;
+        case 9: 
+            return '1';
+        case 10:
+            return '2';
+        case 11:
+            return '3';
+        case 12:
+            return 0x0C;
+        case 13:
+            return 0x0D;
+        case 14:
+            return '0';
+        case 15:
+            return 0x0E;
+        case 16:
+            return 0x0F;
+            
+    }
+    return 0;   
 }
 
-    SEND_CHAR(((Car>>4)&0x0F)+0x30);
+
 void main(void) {}
    
