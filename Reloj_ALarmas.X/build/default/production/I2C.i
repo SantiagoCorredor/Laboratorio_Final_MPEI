@@ -1869,7 +1869,7 @@ unsigned char I2C_Read_Byte(void);
 # 10 "./Includes.h" 2
 
 # 1 "./DS1307.h" 1
-# 24 "./DS1307.h"
+# 25 "./DS1307.h"
 void Write_Byte_To_DS1307_RTC(unsigned char, unsigned char);
 unsigned char Read_Byte_From_DS1307_RTC(unsigned char);
 void Write_Bytes_To_DS1307_RTC(unsigned char,unsigned char*,unsigned char);

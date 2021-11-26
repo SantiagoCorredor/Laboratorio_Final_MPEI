@@ -20,7 +20,6 @@
 
 
 
-
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\include\\xc.h" 1 3
 # 18 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\include\\xc.h" 3
 extern const char __xc8_OPTIM_SPEED;
@@ -1872,7 +1871,7 @@ extern __bank0 unsigned char __resetbits;
 extern __bank0 __bit __powerdown;
 extern __bank0 __bit __timeout;
 # 28 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\include\\xc.h" 2 3
-# 23 "main.c" 2
+# 22 "main.c" 2
 
 # 1 "./I2C.h" 1
 # 15 "./I2C.h"
@@ -1884,10 +1883,10 @@ void I2C_Send_ACK(void);
 void I2C_Send_NACK(void);
 char I2C_Write_Byte(unsigned char);
 unsigned char I2C_Read_Byte(void);
-# 24 "main.c" 2
+# 23 "main.c" 2
 
 # 1 "./DS1307.h" 1
-# 24 "./DS1307.h"
+# 25 "./DS1307.h"
 void Write_Byte_To_DS1307_RTC(unsigned char, unsigned char);
 unsigned char Read_Byte_From_DS1307_RTC(unsigned char);
 void Write_Bytes_To_DS1307_RTC(unsigned char,unsigned char*,unsigned char);
@@ -1896,8 +1895,8 @@ void Set_DS1307_RTC_Time(unsigned char,unsigned char,unsigned char,unsigned char
 unsigned char* Get_DS1307_RTC_Time(void);
 void Set_DS1307_RTC_Date(unsigned char,unsigned char,unsigned char,unsigned char);
 unsigned char* Get_DS1307_RTC_Date(void);
-# 25 "main.c" 2
-# 35 "main.c"
+# 24 "main.c" 2
+# 33 "main.c"
 void SEND_CMD(char dato)
 {
     PORTCbits.RC1=0;
@@ -1956,6 +1955,25 @@ void MCU_Init()
     TRISB=0x00;
     TRISD=0x0F;
 }
+void Init_TMR2(void)
+{
+    T2CONbits.TMR2ON = 1;
+    PIE1bits.TMR2IE = 1;
+    INTCONbits.PEIE = 1;
+    INTCONbits.GIE = 1;
+    T2CONbits.T2CKPS = 0x3;
+    T2CONbits.TOUTPS = 0x0F;
+}
+
+void __attribute__((picinterrupt(("")))) VIS_DIN(void) {
+    if (PIE1bits.TMR2IE && PIR1bits.TMR2IF)
+    {
+        PR2=0xC3;
+
+
+        PIR1bits.TMR2IF = 0;
+    }
+}
 
 void SEND_Tx(char dato)
 {
@@ -1970,60 +1988,6 @@ while(*s) SEND_Tx(*s++);
     SEND_Tx(0x0A);
 }
 
-void RecibeHHMM()
-{ char Car, Datos[4];
-SEND_CMD(0x01);
-
-    MSG_Term("Escriba la Hora:");
-
-    while(PIR1bits.RCIF==0);
-    if(PIR1bits.RCIF==1)
-            {
-                Car=RCREG;
-                PIR1bits.RCIF=0;
-                Datos[3]=Car;
-                SEND_Tx(Car);
-            }
-
-    while(PIR1bits.RCIF==0);
-    if(PIR1bits.RCIF==1)
-            {
-                Car=RCREG;
-                PIR1bits.RCIF=0;
-                Datos[2]=Car;
-                SEND_Tx(Car);
-                SEND_Tx(0x0D);
-                SEND_Tx(0x0A);
-            }
-
-    MSG_Term("Escriba los minutos:");
-    while(PIR1bits.RCIF==0);
-    if(PIR1bits.RCIF==1)
-            {
-                Car=RCREG;
-                PIR1bits.RCIF=0;
-                Datos[1]=Car;
-                SEND_Tx(Car);
-            }
-
-    while(PIR1bits.RCIF==0);
-    if(PIR1bits.RCIF==1)
-            {
-                Car=RCREG;
-                PIR1bits.RCIF=0;
-                Datos[0]=Car;
-                SEND_Tx(Car);
-                SEND_Tx(0x0D);
-                SEND_Tx(0x0A);
-            }
-
-
-
-    Write_Byte_To_DS1307_RTC(2,(Datos[3]<<4)+(Datos[2]&0x0F));
-    Write_Byte_To_DS1307_RTC(1,(Datos[1]<<4)+(Datos[0]&0x0F) );
-    Write_Byte_To_DS1307_RTC(0,0);
-    SEND_CHAR(((Car>>4)&0x0F)+0x30);
-}
 char TECLADO(){
     char Tecla = 1;
     char VPTOD = 0x0E;
@@ -2037,10 +2001,10 @@ char TECLADO(){
         Tecla++;
         if (PORTDbits.RD7 == 0) goto Antirrebote;
         Tecla++;
-        VPTOD = (VPTOD << 1) | 1;
+        VPTOD = (char) ((VPTOD << 1) | 1);
 
-    }
-    while (Tecla < 17);
+    } while (Tecla < 17);
+    PORTD = 0xFF;
     return 0;
 
     Antirrebote:
@@ -2049,6 +2013,7 @@ char TECLADO(){
     while(PORTDbits.RD6 == 0) {};
     while(PORTDbits.RD7 == 0) {};
     _delay((unsigned long)((100)*(4000000/4000.0)));
+    PORTD = 0xFF;
     switch(Tecla){
         case 1:
             return '7';
@@ -2062,7 +2027,6 @@ char TECLADO(){
             return '4';
         case 6:
             return '5';
-            break;
         case 7:
             return '6';
         case 8:
@@ -2086,8 +2050,80 @@ char TECLADO(){
 
     }
     return 0;
+}
+void deco_LCD_dia(char sel){
+    switch (sel){
+        case 0:
+            SEND_MSJ(0xC0,"Lunes");
+            return;
+            break;
+        case 1:
+            SEND_MSJ(0xC0,"Martes");
+            return;
+            break;
+        case 2:
+            SEND_MSJ(0xC0,"Miercoles");
+            return;
+            break;
+        case 3:
+            SEND_MSJ(0xC0,"Jueves");
+            return;
+            break;
+        case 4:
+            SEND_MSJ(0xC0,"Viernes");
+            return;
+            break;
+        case 5:
+            SEND_MSJ(0xC0,"Sabado");
+            return;
+            break;
+        case 6:
+            SEND_MSJ(0xC0,"Domingo");
+            return;
+            break;
+        default:
+            return;
+            break;
+    }
+}
+void EscribeDHHMM()
+{ char Datos[5];
+    SEND_CMD(0x01);
 
+
+
+    SEND_MSJ(0x80,"Marque el dia");
+    SEND_MSJ(0xC0,"Lun:1 Mar:2 Mirc:3");
+    SEND_MSJ(0x80+20,"Juv:4 Vir:5 Sab:6");
+    SEND_MSJ(0xC0+20,"Dom:7");
+    SEND_CMD(1);
+    Datos[4]=TECLADO;
+    SEND_MSJ(0x80+20,"Escriba :");
+    SEND_MSJ(0xC0+20,"Hora y minutos:");
+    _delay((unsigned long)((1500)*(4000000/4000.0)));
+    Datos[3]=TECLADO();
+    Datos[2]=TECLADO();
+    Datos[1]=TECLADO();
+    Datos[0]=TECLADO();
+    deco_LCD_dia(Datos[4]);
+    SEND_CMD(0x80+11);
+    SEND_CHAR(Datos[3]);
+    SEND_CHAR(Datos[2]);
+    SEND_CHAR(':');
+    SEND_CHAR(Datos[1]);
+    SEND_CHAR(Datos[0]);
+    _delay((unsigned long)((3000)*(4000000/4000.0)));
+
+
+
+    Write_Byte_To_DS1307_RTC(3,Datos[4]);
+    Write_Byte_To_DS1307_RTC(2,(Datos[3]<<4)+(Datos[2]&0x0F));
+    Write_Byte_To_DS1307_RTC(1,(Datos[1]<<4)+(Datos[0]&0x0F) );
+    Write_Byte_To_DS1307_RTC(0,0);
 }
 
 
-void main(void) {}
+
+void main(void) {
+
+    }

@@ -18,6 +18,18 @@ void Write_Byte_To_DS1307_RTC(unsigned char Address, unsigned char DataByte)
 	I2C_Write_Byte(DataByte);							// Write data byte
 	I2C_Stop();											// Stop i2c communication
 }
+/*void Write_Byte_To_EEPROM_RTC(unsigned char Address, unsigned char DataByte)
+{
+	I2C_Start();										// Start i2c communication
+
+	// Send i2c address of DS1307 with write command
+	while(I2C_Write_Byte(EEPROM_RTC + 0) == 1)// Wait until device is free
+	{	I2C_Start();	}		
+
+	I2C_Write_Byte(Address);							// Write Address byte
+	I2C_Write_Byte(DataByte);							// Write data byte
+	I2C_Stop();											// Stop i2c communication
+}*/
 
 
 // Function Purpose: Read_Byte_From_DS1307_RTC reads a single byte from given address

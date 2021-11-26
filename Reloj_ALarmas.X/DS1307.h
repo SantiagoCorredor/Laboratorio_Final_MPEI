@@ -5,6 +5,7 @@
 
 // Define DS1307 i2c device address
 #define Device_Address_DS1307_EEPROM	0xD0
+#define EEPROM_RTC                      0xA0
 
 // Define Time Modes
 #define AM_Time					0

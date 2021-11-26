@@ -1869,7 +1869,7 @@ unsigned char I2C_Read_Byte(void);
 # 10 "./Includes.h" 2
 
 # 1 "./DS1307.h" 1
-# 24 "./DS1307.h"
+# 25 "./DS1307.h"
 void Write_Byte_To_DS1307_RTC(unsigned char, unsigned char);
 unsigned char Read_Byte_From_DS1307_RTC(unsigned char);
 void Write_Bytes_To_DS1307_RTC(unsigned char,unsigned char*,unsigned char);
@@ -1900,10 +1900,7 @@ void Write_Byte_To_DS1307_RTC(unsigned char Address, unsigned char DataByte)
  I2C_Write_Byte(DataByte);
  I2C_Stop();
 }
-
-
-
-
+# 37 "DS1307.c"
 unsigned char Read_Byte_From_DS1307_RTC(unsigned char Address)
 {
  unsigned char Byte = 0;
@@ -1984,7 +1981,7 @@ void Read_Bytes_From_DS1307_RTC(unsigned char Address, unsigned char* pData, uns
  I2C_Send_NACK();
  I2C_Stop();
 }
-# 114 "DS1307.c"
+# 126 "DS1307.c"
 void Set_DS1307_RTC_Time(unsigned char Mode, unsigned char Hours, unsigned char Mins, unsigned char Secs)
 {
 
@@ -2003,7 +2000,7 @@ void Set_DS1307_RTC_Time(unsigned char Mode, unsigned char Hours, unsigned char 
 
  Write_Bytes_To_DS1307_RTC(0x00, pRTCArray, 3);
 }
-# 143 "DS1307.c"
+# 155 "DS1307.c"
 unsigned char* Get_DS1307_RTC_Time(void)
 {
 
@@ -2037,7 +2034,7 @@ unsigned char* Get_DS1307_RTC_Time(void)
 
  return pRTCArray;
 }
-# 186 "DS1307.c"
+# 198 "DS1307.c"
 void Set_DS1307_RTC_Date(unsigned char Date, unsigned char Month, unsigned char Year, unsigned char Day)
 {
 
@@ -2049,7 +2046,7 @@ void Set_DS1307_RTC_Date(unsigned char Date, unsigned char Month, unsigned char 
 
  Write_Bytes_To_DS1307_RTC(0x03, pRTCArray, 4);
 }
-# 207 "DS1307.c"
+# 219 "DS1307.c"
 unsigned char* Get_DS1307_RTC_Date(void)
 {
 
