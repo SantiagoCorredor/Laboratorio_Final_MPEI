@@ -30,6 +30,10 @@
 #define SDA PORTCbits.RC4
 #define Buzz PORTCbits.RC5
 #define LCD PORTB
+#define ADD_24LC 0xA0
+
+
+
 void SEND_CMD(char dato)
 {
     RW=0;
@@ -256,8 +260,46 @@ void EscribeDHHMM()
 }
 
 
-
-void main(void) {
+void ESCRIBA_SEE(char addr, char dato)
+{
     
-    }
+    I2C_Start();
+    
+    //send i2c address of 24lc32 
+    while(I2C_Write_Byte(ADD_24LC + 0) == 1)
+    { I2C_Start(); }
+    
+    I2C_Write_Byte(0); //parte alta en cero
+    I2C_Write_Byte(addr);
+    I2C_Write_Byte(dato);
+    I2C_Stop();
+}
+char LEA_SEE(char addr)
+
+{
+    unsigned char Byte = 0;
+    
+    I2C_Start();
+    
+    while (I2C_Write_Byte(ADD_24LC + 0) == 1)
+    { I2C_Start(); }
+    
+    I2C_Write_Byte(0); 
+    I2C_Write_Byte(addr);
+    I2C_ReStart();
+    
+    I2C_Write_Byte(ADD_24LC+ 1);
+    
+    Byte = I2C_Read_Byte();
+    
+    I2C_Send_NACK();
+    I2C_Stop();
+    
+    return (char)Byte;
+}
+
+
+main(void) {
+    
+}
    

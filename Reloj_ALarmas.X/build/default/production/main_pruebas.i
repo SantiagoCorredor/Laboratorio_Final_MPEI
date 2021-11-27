@@ -1,4 +1,4 @@
-# 1 "main.c"
+# 1 "main_pruebas.c"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
 # 288 "<built-in>" 3
@@ -6,16 +6,17 @@
 # 1 "<built-in>" 2
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\include\\language_support.h" 1 3
 # 2 "<built-in>" 2
-# 1 "main.c" 2
-# 11 "main.c"
+# 1 "main_pruebas.c" 2
+# 10 "main_pruebas.c"
 #pragma config FOSC = XT
 #pragma config WDTE = OFF
 #pragma config PWRTE = ON
 #pragma config BOREN = ON
 #pragma config LVP = OFF
-#pragma config CPD = ON
+#pragma config CPD = OFF
 #pragma config WRT = OFF
 #pragma config CP = OFF
+
 
 
 
@@ -1871,8 +1872,11 @@ extern __bank0 unsigned char __resetbits;
 extern __bank0 __bit __powerdown;
 extern __bank0 __bit __timeout;
 # 28 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\include\\xc.h" 2 3
-# 22 "main.c" 2
+# 22 "main_pruebas.c" 2
 
+# 1 "./I2C.c" 1
+# 1 "./Includes.h" 1
+# 10 "./Includes.h"
 # 1 "./I2C.h" 1
 # 15 "./I2C.h"
 void InitI2C(void);
@@ -1883,7 +1887,7 @@ void I2C_Send_ACK(void);
 void I2C_Send_NACK(void);
 char I2C_Write_Byte(unsigned char);
 unsigned char I2C_Read_Byte(void);
-# 23 "main.c" 2
+# 10 "./Includes.h" 2
 
 # 1 "./DS1307.h" 1
 # 25 "./DS1307.h"
@@ -1895,90 +1899,345 @@ void Set_DS1307_RTC_Time(unsigned char,unsigned char,unsigned char,unsigned char
 unsigned char* Get_DS1307_RTC_Time(void);
 void Set_DS1307_RTC_Date(unsigned char,unsigned char,unsigned char,unsigned char);
 unsigned char* Get_DS1307_RTC_Date(void);
-# 24 "main.c" 2
-# 33 "main.c"
+# 11 "./Includes.h" 2
+# 1 "./I2C.c" 2
+
+
+
+
+void InitI2C(void)
+{
+ TRISCbits.TRISC4 = 1;
+ TRISCbits.TRISC3 = 1;
+
+ SSPADD = ((4000000/4000)/100) - 1;
+ SSPSTAT = 0x80;
+ SSPCON = 0x28;
+}
+
+
+
+void I2C_Start(void)
+{
+ SEN = 1;
+ while(!SSPIF);
+ SSPIF = 0;
+}
+
+
+
+void I2C_ReStart(void)
+{
+ RSEN = 1;
+ while(!SSPIF);
+ SSPIF = 0;
+}
+
+
+
+void I2C_Stop(void)
+{
+ PEN = 1;
+ while(!SSPIF);
+ SSPIF = 0;
+}
+
+
+
+void I2C_Send_ACK(void)
+{
+ ACKDT = 0;
+ ACKEN = 1;
+ while(!SSPIF);
+ SSPIF = 0;
+}
+
+
+
+void I2C_Send_NACK(void)
+{
+ ACKDT = 1;
+ ACKEN = 1;
+ while(!SSPIF);
+ SSPIF = 0;
+}
+
+
+
+char I2C_Write_Byte(unsigned char Byte)
+{
+ SSPBUF = Byte;
+ while(!SSPIF);
+ SSPIF = 0;
+
+ return ACKSTAT;
+}
+
+
+
+unsigned char I2C_Read_Byte(void)
+{
+ RCEN = 1;
+ while(!SSPIF);
+ SSPIF = 0;
+
+    return SSPBUF;
+}
+# 23 "main_pruebas.c" 2
+
+# 1 "./DS1307.c" 1
+
+
+
+unsigned char pRTCArray[4];
+unsigned char Temp;
+
+
+
+void Write_Byte_To_DS1307_RTC(unsigned char Address, unsigned char DataByte)
+{
+ I2C_Start();
+
+
+ while(I2C_Write_Byte(0xD0 + 0) == 1)
+ { I2C_Start(); }
+
+ I2C_Write_Byte(Address);
+ I2C_Write_Byte(DataByte);
+ I2C_Stop();
+}
+# 37 "./DS1307.c"
+unsigned char Read_Byte_From_DS1307_RTC(unsigned char Address)
+{
+ unsigned char Byte = 0;
+
+ I2C_Start();
+
+
+ while(I2C_Write_Byte(0xD0 + 0) == 1)
+ { I2C_Start(); }
+
+ I2C_Write_Byte(Address);
+ I2C_ReStart();
+
+
+ I2C_Write_Byte(0xD0 + 1);
+
+ Byte = I2C_Read_Byte();
+
+ I2C_Send_NACK();
+ I2C_Stop();
+
+ return Byte;
+}
+
+
+
+
+
+
+void Write_Bytes_To_DS1307_RTC(unsigned char Address,unsigned char* pData,unsigned char NoOfBytes)
+{
+ unsigned int i;
+
+ I2C_Start();
+
+
+ while(I2C_Write_Byte(0xD0 + 0) == 1)
+ { I2C_Start(); }
+
+ I2C_Write_Byte(Address);
+
+ for(i=0;i<NoOfBytes;i++)
+  I2C_Write_Byte(pData[i]);
+
+ I2C_Stop();
+}
+
+
+
+
+
+
+
+void Read_Bytes_From_DS1307_RTC(unsigned char Address, unsigned char* pData, unsigned int NoOfBytes)
+{
+ unsigned int i;
+
+ I2C_Start();
+
+
+ while(I2C_Write_Byte(0xD0 + 0) == 1)
+ { I2C_Start(); }
+
+ I2C_Write_Byte(Address);
+ I2C_ReStart();
+
+
+ I2C_Write_Byte(0xD0 + 1);
+
+ pData[0] = I2C_Read_Byte();
+
+ for(i=1;i<NoOfBytes;i++)
+ {
+  I2C_Send_ACK();
+  pData[i] = I2C_Read_Byte();
+ }
+
+ I2C_Send_NACK();
+ I2C_Stop();
+}
+# 126 "./DS1307.c"
+void Set_DS1307_RTC_Time(unsigned char Mode, unsigned char Hours, unsigned char Mins, unsigned char Secs)
+{
+
+ pRTCArray[0] = (((unsigned char)(Secs/10))<<4)|((unsigned char)(Secs%10));
+ pRTCArray[1] = (((unsigned char)(Mins/10))<<4)|((unsigned char)(Mins%10));
+ pRTCArray[2] = (((unsigned char)(Hours/10))<<4)|((unsigned char)(Hours%10));
+
+ switch(Mode)
+ {
+ case 0: pRTCArray[2] |= 0x40; break;
+ case 1: pRTCArray[2] |= 0x60; break;
+
+ default: break;
+ }
+
+
+ Write_Bytes_To_DS1307_RTC(0x00, pRTCArray, 3);
+}
+# 155 "./DS1307.c"
+unsigned char* Get_DS1307_RTC_Time(void)
+{
+
+ Read_Bytes_From_DS1307_RTC(0x00, pRTCArray, 3);
+
+
+ Temp = pRTCArray[0];
+ pRTCArray[0] = ((Temp&0x7F)>>4)*10 + (Temp&0x0F);
+
+
+ Temp = pRTCArray[1];
+ pRTCArray[1] = (Temp>>4)*10 + (Temp&0x0F);
+
+
+ if(pRTCArray[2]&0x40)
+ {
+  if(pRTCArray[2]&0x20)
+   pRTCArray[3] = 1;
+  else
+   pRTCArray[3] = 0;
+
+  Temp = pRTCArray[2];
+  pRTCArray[2] = ((Temp&0x1F)>>4)*10 + (Temp&0x0F);
+ }
+ else
+ {
+  Temp = pRTCArray[2];
+  pRTCArray[2] = (Temp>>4)*10 + (Temp&0x0F);
+  pRTCArray[3] = 2;
+ }
+
+ return pRTCArray;
+}
+# 198 "./DS1307.c"
+void Set_DS1307_RTC_Date(unsigned char Date, unsigned char Month, unsigned char Year, unsigned char Day)
+{
+
+ pRTCArray[0] = (((unsigned char)(Day/10))<<4)|((unsigned char)(Day%10));
+ pRTCArray[1] = (((unsigned char)(Date/10))<<4)|((unsigned char)(Date%10));
+ pRTCArray[2] = (((unsigned char)(Month/10))<<4)|((unsigned char)(Month%10));
+ pRTCArray[3] = (((unsigned char)(Year/10))<<4)|((unsigned char)(Year%10));
+
+
+ Write_Bytes_To_DS1307_RTC(0x03, pRTCArray, 4);
+}
+# 219 "./DS1307.c"
+unsigned char* Get_DS1307_RTC_Date(void)
+{
+
+ Read_Bytes_From_DS1307_RTC(0x03, pRTCArray, 4);
+
+
+ Temp = pRTCArray[1];
+ pRTCArray[1] = (Temp>>4)*10 + (Temp&0x0F);
+
+
+ Temp = pRTCArray[2];
+ pRTCArray[2] = (Temp>>4)*10 + (Temp&0x0F);
+
+
+ Temp = pRTCArray[3];
+ pRTCArray[3] = (Temp>>4)*10 + (Temp&0x0F);
+
+ return pRTCArray;
+}
+# 24 "main_pruebas.c" 2
+
+
+
+
+
+
+
 void SEND_CMD(char dato)
 {
-    PORTCbits.RC1=0;
-    PORTCbits.RC0=0;
-    PORTCbits.RC2=1;
-    PORTB=dato;
-    PORTCbits.RC2=0;
+    PORTCbits.RC1 = 0;
+    PORTCbits.RC0 = 0;
+    PORTCbits.RC2 = 1;
+    PORTB = dato;
+    PORTCbits.RC2 = 0;
     _delay((unsigned long)((2)*(4000000/4000.0)));
+
 }
 
 void SEND_CHAR(char dato)
 {
-    PORTCbits.RC1=0;
-    PORTCbits.RC0=1;
-    PORTCbits.RC2=1;
-    PORTB=dato;
-    PORTCbits.RC2=0;
+    PORTCbits.RC1 = 0;
+    PORTCbits.RC0 = 1;
+    PORTCbits.RC2 = 1;
+    PORTB = dato;
     _delay((unsigned long)((1)*(4000000/4000.0)));
 }
 
 void LCD_Init()
 {
     _delay((unsigned long)((20)*(4000000/4000.0)));
-    SEND_CMD(0x38);
+    SEND_CMD(0x30);
     SEND_CMD(0x0C);
     SEND_CMD(0x06);
     SEND_CMD(0x01);
 }
 
-void SEND_MSJ(char POS, char *Msj)
+void EscribeCadenaLCD (const char *s)
 {
-    char carac;
-    SEND_CMD(POS);
-    while(*Msj!=0x00){
-        carac=(char)*Msj;
-        SEND_CHAR(carac);
-        Msj++;
-    }
-    return;
-}
+    while(*s)
+        SEND_CHAR(*s++);
 
+}
 
 void UART_Init()
 {
 
-    TXSTA=0x26;
-    RCSTA=0x90;
-    SPBRG=25;
-    PIR1bits.TXIF=0;
-    PIR1bits.RCIF=0;
+    TXSTA = 0x26;
+    RCSTA = 0x90;
+    SPBRG = 25;
+    PIR1bits.TXIF = 0;
+    PIR1bits.RCIF = 0;
+
 }
 
 void MCU_Init()
 {
-    TRISC=0x19;
-    TRISB=0x00;
-    TRISD=0x0F;
-}
-void Init_TMR2(void)
-{
-    T2CONbits.TMR2ON = 1;
-    PIE1bits.TMR2IE = 1;
-    INTCONbits.PEIE = 1;
-    INTCONbits.GIE = 1;
-    T2CONbits.T2CKPS = 0x3;
-    T2CONbits.TOUTPS = 0x0F;
-}
-
-void __attribute__((picinterrupt(("")))) VIS_DIN(void) {
-    if (PIE1bits.TMR2IE && PIR1bits.TMR2IF)
-    {
-        PR2=0xC3;
-
-
-        PIR1bits.TMR2IF = 0;
-    }
+    TRISC= 0xB8;
+    TRISB = 0x00;
+    TRISD = 0xF0;
 }
 
 void SEND_Tx(char dato)
 {
-    while(TXSTAbits.TRMT==0){};
-    TXREG=dato;
+    while(TXSTAbits.TRMT == 0){};
+    TXREG = dato;
 }
 
 void MSG_Term(const char *s)
@@ -1986,6 +2245,61 @@ void MSG_Term(const char *s)
 while(*s) SEND_Tx(*s++);
     SEND_Tx(0x0D);
     SEND_Tx(0x0A);
+}
+
+void RecibeHHMM()
+{
+    char Car, Datos[4];
+    SEND_CMD(0x01);
+
+    MSG_Term("Escriba la Hora:");
+
+    while(PIR1bits.RCIF == 0);
+    if(PIR1bits.RCIF == 1)
+        {
+            Car = RCREG;
+            PIR1bits.RCIF = 0;
+            Datos[3] = Car;
+            SEND_Tx(Car);
+        }
+    while(PIR1bits.RCIF == 0);
+    if(PIR1bits.RCIF == 1)
+        {
+            Car = RCREG;
+            PIR1bits.RCIF = 0;
+            Datos[2] = Car;
+            SEND_Tx(Car);
+            SEND_Tx(0x0D);
+            SEND_Tx(0x0A);
+        }
+
+    MSG_Term("Escriba los minutos:");
+    while(PIR1bits.RCIF == 0);
+    if (PIR1bits.RCIF == 1)
+        {
+            Car = RCREG;
+            PIR1bits.RCIF = 0;
+            Datos[1] = Car;
+            SEND_Tx(Car);
+        }
+
+    while(PIR1bits.RCIF == 0);
+    if(PIR1bits.RCIF == 1)
+        {
+            Car = RCREG;
+            PIR1bits.RCIF = 0;
+            Datos[0] = Car;
+            SEND_Tx(Car);
+            SEND_Tx(0x0D);
+            SEND_Tx(0x0A);
+        }
+
+
+
+    Write_Byte_To_DS1307_RTC(2,(Datos[3]<<4)+ (Datos[2]& 0x0F));
+    Write_Byte_To_DS1307_RTC(1,(Datos[1]<<4)+ (Datos[0]& 0x0F));
+    Write_Byte_To_DS1307_RTC(0,0);
+
 }
 
 char TECLADO(){
@@ -2001,7 +2315,8 @@ char TECLADO(){
         Tecla++;
         if (PORTDbits.RD7 == 0) goto Antirrebote;
         Tecla++;
-        VPTOD = (char) ((VPTOD << 1) | 1);
+        VPTOD = (char)(VPTOD << 1) | 1;
+        _delay((unsigned long)((10)*(4000000/4000.0)));
 
     } while (Tecla < 17);
     PORTD = 0xFF;
@@ -2051,79 +2366,253 @@ char TECLADO(){
     }
     return 0;
 }
-void deco_LCD_dia(char sel){
-    switch (sel){
-        case 0:
-            SEND_MSJ(0xC0,"Lunes");
-            return;
-            break;
-        case 1:
-            SEND_MSJ(0xC0,"Martes");
-            return;
-            break;
-        case 2:
-            SEND_MSJ(0xC0,"Miercoles");
-            return;
-            break;
-        case 3:
-            SEND_MSJ(0xC0,"Jueves");
-            return;
-            break;
-        case 4:
-            SEND_MSJ(0xC0,"Viernes");
-            return;
-            break;
-        case 5:
-            SEND_MSJ(0xC0,"Sabado");
-            return;
-            break;
-        case 6:
-            SEND_MSJ(0xC0,"Domingo");
-            return;
-            break;
-        default:
-            return;
-            break;
-    }
-}
-void EscribeDHHMM()
-{ char Datos[5];
+
+void LEA_FECHA()
+{
+    char fecha[6];
+
     SEND_CMD(0x01);
 
+    EscribeCadenaLCD("Teclee día (DD):");
+    char car=0;
+    while (car == 0){
+        car = TECLADO();
+        _delay((unsigned long)((10)*(4000000/4000.0)));
+    }
+    SEND_CHAR(car);
+    fecha[0] = car;
+
+    car = 0;
+    while (car == 0){
+        car = TECLADO();
+        _delay((unsigned long)((10)*(4000000/4000.0)));
+    }
+    SEND_CHAR(car);
+    fecha[1] = car;
+
+    _delay((unsigned long)((200)*(4000000/4000.0)));
 
 
-    SEND_MSJ(0x80,"Marque el dia");
-    SEND_MSJ(0xC0,"Lun:1 Mar:2 Mirc:3");
-    SEND_MSJ(0x80+20,"Juv:4 Vir:5 Sab:6");
-    SEND_MSJ(0xC0+20,"Dom:7");
+    SEND_CMD(0x01);
+
+    EscribeCadenaLCD("Teclee mes (MM):");
+
+
+    car = 0;
+    while (car == 0){
+        car = TECLADO();
+        _delay((unsigned long)((10)*(4000000/4000.0)));
+
+    }
+    SEND_CHAR(car);
+    fecha[3] = car;
+    _delay((unsigned long)((200)*(4000000/4000.0)));
+
+
+    SEND_CMD(0x01);
+
+    EscribeCadenaLCD("Teclee año (AA):");
+    car = 0;
+    while (car == 0){
+        car = TECLADO();
+        _delay((unsigned long)((10)*(4000000/4000.0)));
+
+    }
+
+    SEND_CHAR(car);
+    fecha[4] = car;
+
+    car = 0;
+    while (car == 0){
+        car = TECLADO();
+        _delay((unsigned long)((10)*(4000000/4000.0)));
+    }
+
+    SEND_CHAR(car);
+    fecha[5] = car;
+    _delay((unsigned long)((200)*(4000000/4000.0)));
+
     SEND_CMD(1);
-    Datos[4]=TECLADO;
-    SEND_MSJ(0x80+20,"Escriba :");
-    SEND_MSJ(0xC0+20,"Hora y minutos:");
-    _delay((unsigned long)((1500)*(4000000/4000.0)));
-    Datos[3]=TECLADO();
-    Datos[2]=TECLADO();
-    Datos[1]=TECLADO();
-    Datos[0]=TECLADO();
-    deco_LCD_dia(Datos[4]);
-    SEND_CMD(0x80+11);
-    SEND_CHAR(Datos[3]);
-    SEND_CHAR(Datos[2]);
-    SEND_CHAR(':');
-    SEND_CHAR(Datos[1]);
-    SEND_CHAR(Datos[0]);
-    _delay((unsigned long)((3000)*(4000000/4000.0)));
 
+    char DIA = (fecha[0]<<4) + (fecha[1]&0x0F);
+    Write_Byte_To_DS1307_RTC(4,DIA);
 
+    char MES = (fecha[2]<<4) + (fecha[3]&0x0F);
+    Write_Byte_To_DS1307_RTC(5,MES);
 
-    Write_Byte_To_DS1307_RTC(3,Datos[4]);
-    Write_Byte_To_DS1307_RTC(2,(Datos[3]<<4)+(Datos[2]&0x0F));
-    Write_Byte_To_DS1307_RTC(1,(Datos[1]<<4)+(Datos[0]&0x0F) );
-    Write_Byte_To_DS1307_RTC(0,0);
+    char ANNO = (fecha[4]<<4) + (fecha[5]&0x0F);
+    Write_Byte_To_DS1307_RTC(6,ANNO);
+
 }
 
 
 
-void main(void) {
+void ESCRIBA_SEE(char addr, char dato)
+{
 
+
+    I2C_Start();
+
+
+    while(I2C_Write_Byte(0xA0 + 0) == 1)
+    { I2C_Start(); }
+
+    I2C_Write_Byte(0);
+    I2C_Write_Byte(addr);
+    I2C_Write_Byte(dato);
+    I2C_Stop();
+}
+
+
+
+char LEA_SEE(char Address)
+
+{
+    unsigned char Byte = 0;
+
+    I2C_Start();
+
+    while (I2C_Write_Byte(0xA0 + 0) == 1)
+    { I2C_Start(); }
+
+    I2C_Write_Byte(0);
+    I2C_Write_Byte(Address);
+    I2C_ReStart();
+
+    I2C_Write_Byte(0xA0 + 1);
+
+    Byte = I2C_Read_Byte();
+
+    I2C_Send_NACK();
+    I2C_Stop();
+
+    return Byte;
+}
+
+
+
+void main(void)
+{
+    char Car;
+
+    MCU_Init();
+    LCD_Init();
+    UART_Init();
+    InitI2C();
+
+    EscribeCadenaLCD("MPEI 2020-i + I2C");
+
+    SEND_CMD(0x80 + 64);
+    EscribeCadenaLCD(" +++ RTC DS1307 +++");
+
+    SEND_CMD(0x80+20);
+    EscribeCadenaLCD("Lectura y escritura");
+
+    SEND_CMD(0x80+84);
+    EscribeCadenaLCD("DEL MODULO RTC:...");
+
+    _delay((unsigned long)((2000)*(4000000/4000.0)));
+
+    SEND_CMD(1);
+
+    while(1)
+    {
+        SEND_CMD(0x80+0);
+
+        Car = Read_Byte_From_DS1307_RTC(2);
+        SEND_CHAR(((Car>>4) & 0x0F)+0x30);
+        SEND_CHAR((Car & 0x0F) + 0x30);
+
+        SEND_CHAR(':');
+
+        Car = Read_Byte_From_DS1307_RTC(1);
+        SEND_CHAR(((Car>>4) & 0x0F)+0x30);
+        SEND_CHAR((Car & 0x0F) + 0x30);
+
+        SEND_CHAR(':');
+
+        Car = Read_Byte_From_DS1307_RTC(0);
+        SEND_CHAR(((Car>>4) & 0x0F)+0x30);
+        SEND_CHAR((Car & 0x0F) + 0x30);
+
+        SEND_CMD(0xC0);
+
+        Car = Read_Byte_From_DS1307_RTC(4);
+        SEND_CHAR(((Car>>4) & 0x03)+0x30);
+        SEND_CHAR((Car & 0x0F) + 0x30);
+
+        SEND_CHAR('/');
+
+        Car = Read_Byte_From_DS1307_RTC(5);
+        switch(Car)
+        {
+            case 1:
+                EscribeCadenaLCD("ENE");
+                break;
+            case 2:
+                EscribeCadenaLCD("FEB");
+                break;
+            case 3:
+                EscribeCadenaLCD("MAR");
+                break;
+            case 4:
+                EscribeCadenaLCD("ABR");
+                break;
+            case 5:
+                EscribeCadenaLCD("MAY");
+                break;
+            case 6:
+                EscribeCadenaLCD("JUN");
+                break;
+            case 7:
+                EscribeCadenaLCD("JUL");
+                break;
+            case 8:
+                EscribeCadenaLCD("AGO");
+                break;
+            case 9:
+                EscribeCadenaLCD("SEP");
+                break;
+            case 0x10:
+                EscribeCadenaLCD("OCT");
+                break;
+            case 0x11:
+                EscribeCadenaLCD("NOV");
+                break;
+            case 0x12:
+                EscribeCadenaLCD("DIC");
+                break;
+            default:
+                SEND_CHAR(((Car>>4) & 0x0F) + 0x30);
+                SEND_CHAR((Car & 0x0F) + 0x30);
+                break;
+
+        }
+
+        SEND_CHAR('/');
+
+        Car = Read_Byte_From_DS1307_RTC(6);
+        SEND_CHAR(((Car >> 4) & 0x0F) + 0x30);
+        SEND_CHAR((Car & 0x0F) + 0x30);
+
+        if(PIR1bits.RCIF == 1)
+            {
+                Car = RCREG;
+                PIR1bits.RCIF = 0;
+                if(Car == 'H') RecibeHHMM();
+            }
+
+        _delay((unsigned long)((100)*(4000000/4000.0)));
+
+        char a = TECLADO();
+        if(a == 0x0D)
+        {
+            LEA_FECHA();
+            ESCRIBA_SEE(0x07,'D');
+            _delay((unsigned long)((10)*(4000000/4000.0)));
+            a = LEA_SEE(0x07);
+            SEND_CMD(0x80 + 20);
+            SEND_CHAR(a);
+        }
     }
+}
