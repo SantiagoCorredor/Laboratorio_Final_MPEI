@@ -2173,8 +2173,15 @@ unsigned char* Get_DS1307_RTC_Date(void)
  return pRTCArray;
 }
 # 25 "main.c" 2
-# 34 "main.c"
-void SEND_CMD(char dato) {
+
+
+
+
+
+
+
+void SEND_CMD(char dato)
+{
     PORTCbits.RC1 = 0;
     PORTCbits.RC0 = 0;
     PORTCbits.RC2 = 1;
@@ -2184,16 +2191,18 @@ void SEND_CMD(char dato) {
 
 }
 
-void SEND_CHAR(char dato) {
+void SEND_CHAR(char dato)
+{
     PORTCbits.RC1 = 0;
     PORTCbits.RC0 = 1;
     PORTCbits.RC2 = 1;
     PORTB = dato;
-    PORTCbits.RC2 = 0;
+    PORTCbits.RC2=0;
     _delay((unsigned long)((1)*(4000000/4000.0)));
 }
 
-void LCD_Init() {
+void LCD_Init()
+{
     _delay((unsigned long)((20)*(4000000/4000.0)));
     SEND_CMD(0x38);
     SEND_CMD(0x0C);
@@ -2201,18 +2210,15 @@ void LCD_Init() {
     SEND_CMD(0x01);
 }
 
-void SEND_MSJ(char POS, char *Msj) {
-    char carac;
-    SEND_CMD(POS);
-    while (*Msj != 0x00) {
-        carac = (char) *Msj;
-        SEND_CHAR(carac);
-        Msj++;
-    }
+void EscribeCadenaLCD (const char *s)
+{
+    while(*s)
+        SEND_CHAR(*s++);
 
 }
 
-void UART_Init() {
+void UART_Init()
+{
 
     TXSTA = 0x26;
     RCSTA = 0x90;
@@ -2222,28 +2228,87 @@ void UART_Init() {
 
 }
 
-void MCU_Init() {
-    TRISC = 0xB8;
+void MCU_Init()
+{
+    TRISC= 0xB8;
     TRISB = 0x00;
     TRISD = 0xF0;
 }
 
-void SEND_Tx(char dato) {
-    while (TXSTAbits.TRMT == 0) {
-    };
+void SEND_Tx(char dato)
+{
+    while(TXSTAbits.TRMT == 0){};
     TXREG = dato;
 }
 
-void MSG_Term(const char *s) {
-    while (*s) SEND_Tx(*s++);
+void MSG_Term(const char *s)
+{
+while(*s) SEND_Tx(*s++);
     SEND_Tx(0x0D);
     SEND_Tx(0x0A);
 }
-char TECLADO() {
+
+void RecibeHHMM()
+{
+    char Car, Datos[4];
+    SEND_CMD(0x01);
+
+    MSG_Term("Escriba la Hora:");
+
+    while(PIR1bits.RCIF == 0);
+    if(PIR1bits.RCIF == 1)
+        {
+            Car = RCREG;
+            PIR1bits.RCIF = 0;
+            Datos[3] = Car;
+            SEND_Tx(Car);
+        }
+    while(PIR1bits.RCIF == 0);
+    if(PIR1bits.RCIF == 1)
+        {
+            Car = RCREG;
+            PIR1bits.RCIF = 0;
+            Datos[2] = Car;
+            SEND_Tx(Car);
+            SEND_Tx(0x0D);
+            SEND_Tx(0x0A);
+        }
+
+    MSG_Term("Escriba los minutos:");
+    while(PIR1bits.RCIF == 0);
+    if (PIR1bits.RCIF == 1)
+        {
+            Car = RCREG;
+            PIR1bits.RCIF = 0;
+            Datos[1] = Car;
+            SEND_Tx(Car);
+        }
+
+    while(PIR1bits.RCIF == 0);
+    if(PIR1bits.RCIF == 1)
+        {
+            Car = RCREG;
+            PIR1bits.RCIF = 0;
+            Datos[0] = Car;
+            SEND_Tx(Car);
+            SEND_Tx(0x0D);
+            SEND_Tx(0x0A);
+        }
+
+
+
+    Write_Byte_To_DS1307_RTC(2,(Datos[3]<<4)+ (Datos[2]& 0x0F));
+    Write_Byte_To_DS1307_RTC(1,(Datos[1]<<4)+ (Datos[0]& 0x0F));
+    Write_Byte_To_DS1307_RTC(0,0);
+
+}
+
+char TECLADO(){
     char Tecla = 1;
     char VPTOD = 0x0E;
 
-    do {
+    do
+    {
         PORTD = VPTOD;
         if (PORTDbits.RD4 == 0) goto Antirrebote;
         Tecla++;
@@ -2253,7 +2318,7 @@ char TECLADO() {
         Tecla++;
         if (PORTDbits.RD7 == 0) goto Antirrebote;
         Tecla++;
-        VPTOD = (char) (VPTOD << 1) | 1;
+        VPTOD = (char)(VPTOD << 1) | 1;
         _delay((unsigned long)((10)*(4000000/4000.0)));
 
     } while (Tecla < 17);
@@ -2261,25 +2326,21 @@ char TECLADO() {
     return 0;
 
 Antirrebote:
-    while (PORTDbits.RD4 == 0) {
-    };
-    while (PORTDbits.RD5 == 0) {
-    };
-    while (PORTDbits.RD6 == 0) {
-    };
-    while (PORTDbits.RD7 == 0) {
-    };
+    while(PORTDbits.RD4 == 0) {};
+    while(PORTDbits.RD5 == 0) {};
+    while(PORTDbits.RD6 == 0) {};
+    while(PORTDbits.RD7 == 0) {};
     _delay((unsigned long)((100)*(4000000/4000.0)));
     PORTD = 0xFF;
-    switch (Tecla) {
+    switch(Tecla){
         case 1:
-            return '1';
+            return '7';
         case 2:
-            return '2';
+            return '8';
         case 3:
-            return '3';
+            return '9';
         case 4:
-            return 0x0A;
+            return '/';
         case 5:
             return '4';
         case 6:
@@ -2287,23 +2348,23 @@ Antirrebote:
         case 7:
             return '6';
         case 8:
-            return 0x0B;
+            return 'X';
         case 9:
-            return '7';
+            return '1';
         case 10:
-            return '8';
+            return '2';
         case 11:
-            return '9';
+            return '3';
         case 12:
-            return 0x0C;
+            return '-';
         case 13:
-            return 'n';
+            return 0x0D;
         case 14:
             return '0';
         case 15:
-            return 'f';
+            return '=';
         case 16:
-            return 0x0D;
+            return '+';
         default:
             break;
 
@@ -2312,268 +2373,15 @@ Antirrebote:
 }
 
 
-void RecibeHHMM() {
-    char Car, Datos[4];
-    SEND_CMD(0x01);
-
-    SEND_MSJ(0x80, "Escriba la Hora:");
-    SEND_MSJ(0x80, "HH/MM");
-
-    Car = TECLADO();
-    Datos[3] = Car;
-    Car = TECLADO();
-    Datos[2] = Car;
-    Car = TECLADO();
-    Datos[1] = Car;
-    Car = TECLADO();
-    Datos[0] = Car;
-    SEND_CMD(0x80 + 20);
-    SEND_CHAR(Datos[3]);
-    SEND_CHAR(Datos[2]);
-    SEND_CHAR(':');
-    SEND_CHAR(Datos[1]);
-    SEND_CHAR(Datos[0]);
-
-
-    Write_Byte_To_DS1307_RTC(2, (Datos[3] << 4)+ (Datos[2]& 0x0F));
-    Write_Byte_To_DS1307_RTC(1, (Datos[1] << 4)+ (Datos[0]& 0x0F));
-    Write_Byte_To_DS1307_RTC(0, 0);
-
-}
-
-char Deco_num(char dato) {
-    switch (dato) {
-        case 0:
-            return '0';
-        case 1:
-            return '1';
-        case 2:
-            return '2';
-        case 3:
-            return '3';
-        case 4:
-            return '4';
-        case 5:
-            return '5';
-        case 6:
-            return '6';
-        case 7:
-            return '7';
-        case 8:
-            return '8';
-        case 9:
-            return '9';
-        default:
-            return ' ';
-    }
-}
-void deco_mes(char addr,char Car) {
-    switch (Car) {
-        case 1:
-            SEND_MSJ(addr, "ENE");
-            break;
-        case 2:
-            SEND_MSJ(addr, "FEB");
-            break;
-        case 3:
-            SEND_MSJ(addr, "MAR");
-            break;
-        case 4:
-            SEND_MSJ(addr, "ABR");
-            break;
-        case 5:
-            SEND_MSJ(addr, "MAY");
-            break;
-        case 6:
-            SEND_MSJ(addr, "JUN");
-            break;
-        case 7:
-            SEND_MSJ(addr, "JUL");
-            break;
-        case 8:
-            SEND_MSJ(addr, "AGO");
-            break;
-        case 9:
-            SEND_MSJ(addr, "SEP");
-            break;
-        case 0x10:
-            SEND_MSJ(addr, "OCT");
-            break;
-        case 0x11:
-            SEND_MSJ(addr, "NOV");
-            break;
-        case 0x12:
-            SEND_MSJ(addr, "DIC");
-            break;
-        default:
-            SEND_CHAR(((Car >> 4) & 0x0F) + 0x30);
-            SEND_CHAR((Car & 0x0F) + 0x30);
-            break;
-
-    }
-}
-
-
-void ESCRIBA_SEE(char addr, char dato) {
-
-    I2C_Start();
-
-
-    while (I2C_Write_Byte(0xA0 + 0) == 1) {
-        I2C_Start();
-    }
-
-    I2C_Write_Byte(0);
-    I2C_Write_Byte(addr);
-    I2C_Write_Byte(dato);
-    I2C_Stop();
-}
-
-
-
-void RecibeALARMAS(char addr) {
-    char Car, Datos[10], aux1, aux2,ctr;
-    SEND_CMD(0x01);
-
-    SEND_MSJ(0x80, "Escriba alarma ");
-    aux1 = addr / 10;
-    aux2 = aux1 * 10 - addr;
-    SEND_CHAR(Deco_num(aux1));
-    SEND_CHAR(Deco_num(aux2));
-    SEND_MSJ(0xC0, "AA/MM/DD HH:MM");
-    SEND_MSJ(0x80+20, "*=on #=off ");
-    SEND_CHAR('a');
-    _delay((unsigned long)((2000)*(4000000/4000.0)));
-    SEND_CMD(1);
-
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[9] = Car;
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[8] = Car;
-
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[7] = Car;
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[6] = Car;
-
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[5] = Car;
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[4] = Car;
-
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[3] = Car;
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[2] = Car;
-
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[1] = Car;
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[0] = Car;
-
-    Car=TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-
-    if (Car == 'n'){
-        ctr = 1;
-    }
-    else{
-        ctr = 0;
-    }
-# 395 "main.c"
-    SEND_CMD(0x80);
-
-    SEND_CHAR(Datos[3]);
-    SEND_CHAR(Datos[2]);
-    SEND_CHAR(':');
-
-    SEND_CHAR(Datos[1]);
-    SEND_CHAR(Datos[0]);
-
-    if (ctr==1){
-        SEND_MSJ(0x80+15,"On");
-    }else {
-        SEND_MSJ(0x80+15,"Off");
-    }
-
-    SEND_CMD(0xC0);
-    SEND_CHAR(Datos[5]);
-    SEND_CHAR(Datos[4]);
-    SEND_CHAR('/');
-
-    deco_mes(0xC0 + 2, ((Datos[7] << 4)+ (Datos[6]& 0x0F)));
-    SEND_CHAR('/');
-
-    SEND_CHAR(Datos[9]);
-    SEND_CHAR(Datos[8]);
-
-    ESCRIBA_SEE(addr++, (Datos[3] << 4)+ (Datos[2]& 0x0F));
-    _delay((unsigned long)((10)*(4000000/4000.0)));
-    ESCRIBA_SEE(addr++, (Datos[1] << 4)+ (Datos[0]& 0x0F));
-    _delay((unsigned long)((10)*(4000000/4000.0)));
-    ESCRIBA_SEE(addr++, (Datos[5] << 4)+ (Datos[4]& 0x0F));
-    _delay((unsigned long)((10)*(4000000/4000.0)));
-    ESCRIBA_SEE(addr++, (Datos[7] << 4)+ (Datos[6]& 0x0F));
-    _delay((unsigned long)((10)*(4000000/4000.0)));
-    ESCRIBA_SEE(addr++, (Datos[9] << 4)+ (Datos[8]& 0x0F));
-    _delay((unsigned long)((10)*(4000000/4000.0)));
-    ESCRIBA_SEE(addr++, ctr);
-    _delay((unsigned long)((10)*(4000000/4000.0)));
-    return;
-}
-
-
-void LEA_FECHA() {
+void LEA_FECHA()
+{
     char fecha[6];
 
     SEND_CMD(0x01);
 
-    SEND_MSJ(0x80, "Teclee día (DD):");
-    char car = 0;
-    while (car == 0) {
+    EscribeCadenaLCD("Teclee d?a (DD):");
+    char car=0;
+    while (car == 0){
         car = TECLADO();
         _delay((unsigned long)((10)*(4000000/4000.0)));
     }
@@ -2581,7 +2389,7 @@ void LEA_FECHA() {
     fecha[0] = car;
 
     car = 0;
-    while (car == 0) {
+    while (car == 0){
         car = TECLADO();
         _delay((unsigned long)((10)*(4000000/4000.0)));
     }
@@ -2593,11 +2401,11 @@ void LEA_FECHA() {
 
     SEND_CMD(0x01);
 
-    SEND_MSJ(0x80, "Teclee mes (MM):");
+    EscribeCadenaLCD("Teclee mes (MM):");
 
 
     car = 0;
-    while (car == 0) {
+    while (car == 0){
         car = TECLADO();
         _delay((unsigned long)((10)*(4000000/4000.0)));
 
@@ -2609,9 +2417,9 @@ void LEA_FECHA() {
 
     SEND_CMD(0x01);
 
-    SEND_MSJ(0x80,"Teclee año (AA):");
+    EscribeCadenaLCD("Teclee a?o (AA):");
     car = 0;
-    while (car == 0) {
+    while (car == 0){
         car = TECLADO();
         _delay((unsigned long)((10)*(4000000/4000.0)));
 
@@ -2621,7 +2429,7 @@ void LEA_FECHA() {
     fecha[4] = car;
 
     car = 0;
-    while (car == 0) {
+    while (car == 0){
         car = TECLADO();
         _delay((unsigned long)((10)*(4000000/4000.0)));
     }
@@ -2632,28 +2440,46 @@ void LEA_FECHA() {
 
     SEND_CMD(1);
 
-    char DIA = (fecha[0] << 4) + (fecha[1]&0x0F);
-    Write_Byte_To_DS1307_RTC(4, DIA);
+    char DIA = (fecha[0]<<4) + (fecha[1]&0x0F);
+    Write_Byte_To_DS1307_RTC(4,DIA);
 
-    char MES = (fecha[2] << 4) + (fecha[3]&0x0F);
-    Write_Byte_To_DS1307_RTC(5, MES);
+    char MES = (fecha[2]<<4) + (fecha[3]&0x0F);
+    Write_Byte_To_DS1307_RTC(5,MES);
 
-    char ANNO = (fecha[4] << 4) + (fecha[5]&0x0F);
-    Write_Byte_To_DS1307_RTC(6, ANNO);
+    char ANNO = (fecha[4]<<4) + (fecha[5]&0x0F);
+    Write_Byte_To_DS1307_RTC(6,ANNO);
 
 }
 
 
 
+void ESCRIBA_SEE(char addr, char dato)
+{
+
+
+    I2C_Start();
+
+
+    while(I2C_Write_Byte(0xA0 + 0) == 1)
+    { I2C_Start(); }
+
+    I2C_Write_Byte(0);
+    I2C_Write_Byte(addr);
+    I2C_Write_Byte(dato);
+    I2C_Stop();
+}
+
+
+
 char LEA_SEE(char Address)
- {
+
+{
     unsigned char Byte = 0;
 
     I2C_Start();
 
-    while (I2C_Write_Byte(0xA0 + 0) == 1) {
-        I2C_Start();
-    }
+    while (I2C_Write_Byte(0xA0 + 0) == 1)
+    { I2C_Start(); }
 
     I2C_Write_Byte(0);
     I2C_Write_Byte(Address);
@@ -2671,131 +2497,31 @@ char LEA_SEE(char Address)
 
 
 
-
-void deco_dia(char sel) {
-    switch (sel) {
-        case 0:
-            SEND_MSJ(0xC0, "Lunes");
-            return;
-            break;
-        case 1:
-            SEND_MSJ(0xC0, "Martes");
-            return;
-            break;
-        case 2:
-            SEND_MSJ(0xC0, "Miercoles");
-            return;
-            break;
-        case 3:
-            SEND_MSJ(0xC0, "Jueves");
-            return;
-            break;
-        case 4:
-            SEND_MSJ(0xC0, "Viernes");
-            return;
-            break;
-        case 5:
-            SEND_MSJ(0xC0, "Sabado");
-            return;
-            break;
-        case 6:
-            SEND_MSJ(0xC0, "Domingo");
-            return;
-            break;
-        default:
-            return;
-            break;
-    }
-}
-
-void anti_r() {
-    char Car;
-    while (Car != 'r') {
-        if (PIR1bits.RCIF == 1) {
-
-            Car = RCREG;
-            PIR1bits.RCIF = 0;
-        }
-    }
-    return;
-}
-void Buzz_on(){
-    PORTCbits.RC5=0;
-}
-void Buzz_off(){
-    PORTCbits.RC5=1;
-}
-void melodia(){
-
-    Buzz_on();
-    _delay((unsigned long)((300)*(4000000/4000.0)));
-    Buzz_off();
-    _delay((unsigned long)((700)*(4000000/4000.0)));
-}
-
-void main(void) {
+void main(void)
+{
     char Car;
     MCU_Init();
     LCD_Init();
     UART_Init();
     InitI2C();
 
-    SEND_MSJ(0x80,"MPEI LAB 6");
+    EscribeCadenaLCD("MPEI 2020-i + I2C");
 
-    SEND_MSJ(0xC0 , "    RTC DS1307   ");
+    SEND_CMD(0x80 + 64);
+    EscribeCadenaLCD(" +++ RTC DS1307 +++");
 
-    SEND_MSJ(0x80 + 20, "Lectura y escritura");
+    SEND_CMD(0x80+20);
+    EscribeCadenaLCD("Lectura y escritura");
 
-    SEND_MSJ(0xC0 + 20, "ALARMAS EEPROM");
+    SEND_CMD(0x80+84);
+    EscribeCadenaLCD("DEL MODULO RTC:...");
 
     _delay((unsigned long)((2000)*(4000000/4000.0)));
 
     SEND_CMD(1);
-    MSG_Term("Hasta acá llegué");
-    while (1) {
-        if (PIR1bits.RCIF == 1) {
-            Car = RCREG;
-            PIR1bits.RCIF = 0;
-            MSG_Term("Hasta acá llegué");
 
-        switch (Car){
-            case '1':
-                anti_r();
-                RecibeALARMAS(0);
-                MSG_Term("1");
-
-            case '2':
-                anti_r();
-                RecibeALARMAS(8);
-
-            case '3':
-                anti_r();
-                RecibeALARMAS(16);
-            case '4':
-                anti_r();
-                RecibeALARMAS(24);
-            case '5':
-                anti_r();
-                RecibeALARMAS(32);
-            case '6':
-                anti_r();
-                RecibeALARMAS(40);
-            case '7':
-                anti_r();
-                RecibeALARMAS(48);
-            case '8':
-                anti_r();
-                RecibeALARMAS(56);
-            case '9':
-                anti_r();
-                RecibeALARMAS(64);
-            case '0':
-                anti_r();
-                RecibeALARMAS(72);
-            }
-        }
-
-
+    while(1)
+    {
         SEND_CMD(0x80+0);
 
         Car = Read_Byte_From_DS1307_RTC(2);
@@ -2823,17 +2549,75 @@ void main(void) {
         SEND_CHAR('/');
 
         Car = Read_Byte_From_DS1307_RTC(5);
+        switch(Car)
+        {
+            case 1:
+                EscribeCadenaLCD("ENE");
+                break;
+            case 2:
+                EscribeCadenaLCD("FEB");
+                break;
+            case 3:
+                EscribeCadenaLCD("MAR");
+                break;
+            case 4:
+                EscribeCadenaLCD("ABR");
+                break;
+            case 5:
+                EscribeCadenaLCD("MAY");
+                break;
+            case 6:
+                EscribeCadenaLCD("JUN");
+                break;
+            case 7:
+                EscribeCadenaLCD("JUL");
+                break;
+            case 8:
+                EscribeCadenaLCD("AGO");
+                break;
+            case 9:
+                EscribeCadenaLCD("SEP");
+                break;
+            case 0x10:
+                EscribeCadenaLCD("OCT");
+                break;
+            case 0x11:
+                EscribeCadenaLCD("NOV");
+                break;
+            case 0x12:
+                EscribeCadenaLCD("DIC");
+                break;
+            default:
+                SEND_CHAR(((Car>>4) & 0x0F) + 0x30);
+                SEND_CHAR((Car & 0x0F) + 0x30);
+                break;
 
-        deco_mes(0xC0+4,(Car));
+        }
+
         SEND_CHAR('/');
 
         Car = Read_Byte_From_DS1307_RTC(6);
         SEND_CHAR(((Car >> 4) & 0x0F) + 0x30);
         SEND_CHAR((Car & 0x0F) + 0x30);
 
+        if(PIR1bits.RCIF == 1)
+            {
+                Car = RCREG;
+                PIR1bits.RCIF = 0;
+                if(Car == 'H') RecibeHHMM();
+            }
 
-        _delay((unsigned long)((1000)*(4000000/4000.0)));
+        _delay((unsigned long)((100)*(4000000/4000.0)));
 
+        char a = TECLADO();
+        if(a == 0x0D)
+        {
+            LEA_FECHA();
 
+            _delay((unsigned long)((10)*(4000000/4000.0)));
+
+            SEND_CMD(0x80 + 20);
+            SEND_CHAR(a);
+        }
     }
 }

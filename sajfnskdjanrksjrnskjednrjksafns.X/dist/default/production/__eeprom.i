@@ -1,4 +1,4 @@
-# 1 "main.c"
+# 1 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\sources\\c90\\pic\\__eeprom.c"
 # 1 "<built-in>" 1
 # 1 "<built-in>" 3
 # 288 "<built-in>" 3
@@ -6,21 +6,7 @@
 # 1 "<built-in>" 2
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\include\\language_support.h" 1 3
 # 2 "<built-in>" 2
-# 1 "main.c" 2
-# 11 "main.c"
-#pragma config FOSC = XT
-#pragma config WDTE = OFF
-#pragma config PWRTE = ON
-#pragma config BOREN = ON
-#pragma config LVP = OFF
-#pragma config CPD = ON
-#pragma config WRT = OFF
-#pragma config CP = OFF
-
-
-
-
-
+# 1 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\sources\\c90\\pic\\__eeprom.c" 2
 # 1 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\include\\xc.h" 1 3
 # 18 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\include\\xc.h" 3
 extern const char __xc8_OPTIM_SPEED;
@@ -1872,968 +1858,176 @@ extern __bank0 unsigned char __resetbits;
 extern __bank0 __bit __powerdown;
 extern __bank0 __bit __timeout;
 # 28 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\include\\xc.h" 2 3
-# 23 "main.c" 2
-
-# 1 "./I2C.c" 1
-# 1 "./Includes.h" 1
-# 10 "./Includes.h"
-# 1 "./I2C.h" 1
-# 15 "./I2C.h"
-void InitI2C(void);
-void I2C_Start(void);
-void I2C_ReStart(void);
-void I2C_Stop(void);
-void I2C_Send_ACK(void);
-void I2C_Send_NACK(void);
-char I2C_Write_Byte(unsigned char);
-unsigned char I2C_Read_Byte(void);
-# 10 "./Includes.h" 2
-
-# 1 "./DS1307.h" 1
-# 25 "./DS1307.h"
-void Write_Byte_To_DS1307_RTC(unsigned char, unsigned char);
-unsigned char Read_Byte_From_DS1307_RTC(unsigned char);
-void Write_Bytes_To_DS1307_RTC(unsigned char,unsigned char*,unsigned char);
-void Read_Bytes_From_DS1307_RTC(unsigned char,unsigned char*,unsigned int);
-void Set_DS1307_RTC_Time(unsigned char,unsigned char,unsigned char,unsigned char);
-unsigned char* Get_DS1307_RTC_Time(void);
-void Set_DS1307_RTC_Date(unsigned char,unsigned char,unsigned char,unsigned char);
-unsigned char* Get_DS1307_RTC_Date(void);
-# 11 "./Includes.h" 2
-# 1 "./I2C.c" 2
+# 1 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\sources\\c90\\pic\\__eeprom.c" 2
 
 
 
 
-void InitI2C(void)
+void
+__eecpymem(volatile unsigned char *to, __eeprom unsigned char * from, unsigned char size)
 {
- TRISCbits.TRISC4 = 1;
- TRISCbits.TRISC3 = 1;
+ volatile unsigned char *cp = to;
 
- SSPADD = ((4000000/4000)/100) - 1;
- SSPSTAT = 0x80;
- SSPCON = 0x28;
-}
+ while (EECON1bits.WR) continue;
+ EEADR = (unsigned char)from;
+ while(size--) {
+  while (EECON1bits.WR) continue;
 
+  EECON1 &= 0x7F;
 
-
-void I2C_Start(void)
-{
- SEN = 1;
- while(!SSPIF);
- SSPIF = 0;
-}
-
-
-
-void I2C_ReStart(void)
-{
- RSEN = 1;
- while(!SSPIF);
- SSPIF = 0;
-}
-
-
-
-void I2C_Stop(void)
-{
- PEN = 1;
- while(!SSPIF);
- SSPIF = 0;
-}
-
-
-
-void I2C_Send_ACK(void)
-{
- ACKDT = 0;
- ACKEN = 1;
- while(!SSPIF);
- SSPIF = 0;
-}
-
-
-
-void I2C_Send_NACK(void)
-{
- ACKDT = 1;
- ACKEN = 1;
- while(!SSPIF);
- SSPIF = 0;
-}
-
-
-
-char I2C_Write_Byte(unsigned char Byte)
-{
- SSPBUF = Byte;
- while(!SSPIF);
- SSPIF = 0;
-
- return ACKSTAT;
-}
-
-
-
-unsigned char I2C_Read_Byte(void)
-{
- RCEN = 1;
- while(!SSPIF);
- SSPIF = 0;
-
-    return SSPBUF;
-}
-# 24 "main.c" 2
-
-# 1 "./DS1307.c" 1
-
-
-
-unsigned char pRTCArray[4];
-unsigned char Temp;
-
-
-
-void Write_Byte_To_DS1307_RTC(unsigned char Address, unsigned char DataByte)
-{
- I2C_Start();
-
-
- while(I2C_Write_Byte(0xD0 + 0) == 1)
- { I2C_Start(); }
-
- I2C_Write_Byte(Address);
- I2C_Write_Byte(DataByte);
- I2C_Stop();
-}
-# 37 "./DS1307.c"
-unsigned char Read_Byte_From_DS1307_RTC(unsigned char Address)
-{
- unsigned char Byte = 0;
-
- I2C_Start();
-
-
- while(I2C_Write_Byte(0xD0 + 0) == 1)
- { I2C_Start(); }
-
- I2C_Write_Byte(Address);
- I2C_ReStart();
-
-
- I2C_Write_Byte(0xD0 + 1);
-
- Byte = I2C_Read_Byte();
-
- I2C_Send_NACK();
- I2C_Stop();
-
- return Byte;
-}
-
-
-
-
-
-
-void Write_Bytes_To_DS1307_RTC(unsigned char Address,unsigned char* pData,unsigned char NoOfBytes)
-{
- unsigned int i;
-
- I2C_Start();
-
-
- while(I2C_Write_Byte(0xD0 + 0) == 1)
- { I2C_Start(); }
-
- I2C_Write_Byte(Address);
-
- for(i=0;i<NoOfBytes;i++)
-  I2C_Write_Byte(pData[i]);
-
- I2C_Stop();
-}
-
-
-
-
-
-
-
-void Read_Bytes_From_DS1307_RTC(unsigned char Address, unsigned char* pData, unsigned int NoOfBytes)
-{
- unsigned int i;
-
- I2C_Start();
-
-
- while(I2C_Write_Byte(0xD0 + 0) == 1)
- { I2C_Start(); }
-
- I2C_Write_Byte(Address);
- I2C_ReStart();
-
-
- I2C_Write_Byte(0xD0 + 1);
-
- pData[0] = I2C_Read_Byte();
-
- for(i=1;i<NoOfBytes;i++)
- {
-  I2C_Send_ACK();
-  pData[i] = I2C_Read_Byte();
+  EECON1bits.RD = 1;
+  *cp++ = EEDATA;
+  ++EEADR;
  }
-
- I2C_Send_NACK();
- I2C_Stop();
+# 36 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\sources\\c90\\pic\\__eeprom.c"
 }
-# 126 "./DS1307.c"
-void Set_DS1307_RTC_Time(unsigned char Mode, unsigned char Hours, unsigned char Mins, unsigned char Secs)
+
+void
+__memcpyee(__eeprom unsigned char * to, const unsigned char *from, unsigned char size)
 {
+ const unsigned char *ptr =from;
 
- pRTCArray[0] = (((unsigned char)(Secs/10))<<4)|((unsigned char)(Secs%10));
- pRTCArray[1] = (((unsigned char)(Mins/10))<<4)|((unsigned char)(Mins%10));
- pRTCArray[2] = (((unsigned char)(Hours/10))<<4)|((unsigned char)(Hours%10));
+ while (EECON1bits.WR) continue;
+ EEADR = (unsigned char)to - 1U;
 
- switch(Mode)
- {
- case 0: pRTCArray[2] |= 0x40; break;
- case 1: pRTCArray[2] |= 0x60; break;
+ EECON1 &= 0x7F;
 
- default: break;
+ while(size--) {
+  while (EECON1bits.WR) {
+   continue;
+  }
+  EEDATA = *ptr++;
+  ++EEADR;
+  STATUSbits.CARRY = 0;
+  if (INTCONbits.GIE) {
+   STATUSbits.CARRY = 1;
+  }
+  INTCONbits.GIE = 0;
+  EECON1bits.WREN = 1;
+  EECON2 = 0x55;
+  EECON2 = 0xAA;
+  EECON1bits.WR = 1;
+  EECON1bits.WREN = 0;
+  if (STATUSbits.CARRY) {
+   INTCONbits.GIE = 1;
+  }
  }
-
-
- Write_Bytes_To_DS1307_RTC(0x00, pRTCArray, 3);
+# 101 "C:\\Program Files\\Microchip\\xc8\\v2.32\\pic\\sources\\c90\\pic\\__eeprom.c"
 }
-# 155 "./DS1307.c"
-unsigned char* Get_DS1307_RTC_Time(void)
+
+unsigned char
+__eetoc(__eeprom void *addr)
 {
-
- Read_Bytes_From_DS1307_RTC(0x00, pRTCArray, 3);
-
-
- Temp = pRTCArray[0];
- pRTCArray[0] = ((Temp&0x7F)>>4)*10 + (Temp&0x0F);
-
-
- Temp = pRTCArray[1];
- pRTCArray[1] = (Temp>>4)*10 + (Temp&0x0F);
-
-
- if(pRTCArray[2]&0x40)
- {
-  if(pRTCArray[2]&0x20)
-   pRTCArray[3] = 1;
-  else
-   pRTCArray[3] = 0;
-
-  Temp = pRTCArray[2];
-  pRTCArray[2] = ((Temp&0x1F)>>4)*10 + (Temp&0x0F);
- }
- else
- {
-  Temp = pRTCArray[2];
-  pRTCArray[2] = (Temp>>4)*10 + (Temp&0x0F);
-  pRTCArray[3] = 2;
- }
-
- return pRTCArray;
+ unsigned char data;
+ __eecpymem((unsigned char *) &data,addr,1);
+ return data;
 }
-# 198 "./DS1307.c"
-void Set_DS1307_RTC_Date(unsigned char Date, unsigned char Month, unsigned char Year, unsigned char Day)
+
+unsigned int
+__eetoi(__eeprom void *addr)
 {
-
- pRTCArray[0] = (((unsigned char)(Day/10))<<4)|((unsigned char)(Day%10));
- pRTCArray[1] = (((unsigned char)(Date/10))<<4)|((unsigned char)(Date%10));
- pRTCArray[2] = (((unsigned char)(Month/10))<<4)|((unsigned char)(Month%10));
- pRTCArray[3] = (((unsigned char)(Year/10))<<4)|((unsigned char)(Year%10));
-
-
- Write_Bytes_To_DS1307_RTC(0x03, pRTCArray, 4);
+ unsigned int data;
+ __eecpymem((unsigned char *) &data,addr,2);
+ return data;
 }
-# 219 "./DS1307.c"
-unsigned char* Get_DS1307_RTC_Date(void)
+
+#pragma warning push
+#pragma warning disable 2040
+__uint24
+__eetom(__eeprom void *addr)
 {
-
- Read_Bytes_From_DS1307_RTC(0x03, pRTCArray, 4);
-
-
- Temp = pRTCArray[1];
- pRTCArray[1] = (Temp>>4)*10 + (Temp&0x0F);
-
-
- Temp = pRTCArray[2];
- pRTCArray[2] = (Temp>>4)*10 + (Temp&0x0F);
-
-
- Temp = pRTCArray[3];
- pRTCArray[3] = (Temp>>4)*10 + (Temp&0x0F);
-
- return pRTCArray;
+ __uint24 data;
+ __eecpymem((unsigned char *) &data,addr,3);
+ return data;
 }
-# 25 "main.c" 2
-# 34 "main.c"
-void SEND_CMD(char dato) {
-    PORTCbits.RC1 = 0;
-    PORTCbits.RC0 = 0;
-    PORTCbits.RC2 = 1;
-    PORTB = dato;
-    PORTCbits.RC2 = 0;
-    _delay((unsigned long)((2)*(4000000/4000.0)));
+#pragma warning pop
 
+unsigned long
+__eetol(__eeprom void *addr)
+{
+ unsigned long data;
+ __eecpymem((unsigned char *) &data,addr,4);
+ return data;
 }
 
-void SEND_CHAR(char dato) {
-    PORTCbits.RC1 = 0;
-    PORTCbits.RC0 = 1;
-    PORTCbits.RC2 = 1;
-    PORTB = dato;
-    PORTCbits.RC2 = 0;
-    _delay((unsigned long)((1)*(4000000/4000.0)));
+#pragma warning push
+#pragma warning disable 1516
+unsigned long long
+__eetoo(__eeprom void *addr)
+{
+ unsigned long long data;
+ __eecpymem((unsigned char *) &data,addr,8);
+ return data;
+}
+#pragma warning pop
+
+unsigned char
+__ctoee(__eeprom void *addr, unsigned char data)
+{
+ __memcpyee(addr,(unsigned char *) &data,1);
+ return data;
 }
 
-void LCD_Init() {
-    _delay((unsigned long)((20)*(4000000/4000.0)));
-    SEND_CMD(0x38);
-    SEND_CMD(0x0C);
-    SEND_CMD(0x06);
-    SEND_CMD(0x01);
+unsigned int
+__itoee(__eeprom void *addr, unsigned int data)
+{
+ __memcpyee(addr,(unsigned char *) &data,2);
+ return data;
 }
 
-void SEND_MSJ(char POS, char *Msj) {
-    char carac;
-    SEND_CMD(POS);
-    while (*Msj != 0x00) {
-        carac = (char) *Msj;
-        SEND_CHAR(carac);
-        Msj++;
-    }
+#pragma warning push
+#pragma warning disable 2040
+__uint24
+__mtoee(__eeprom void *addr, __uint24 data)
+{
+ __memcpyee(addr,(unsigned char *) &data,3);
+ return data;
+}
+#pragma warning pop
 
+unsigned long
+__ltoee(__eeprom void *addr, unsigned long data)
+{
+ __memcpyee(addr,(unsigned char *) &data,4);
+ return data;
 }
 
-void UART_Init() {
+#pragma warning push
+#pragma warning disable 1516
+unsigned long long
+__otoee(__eeprom void *addr, unsigned long long data)
+{
+ __memcpyee(addr,(unsigned char *) &data,8);
+ return data;
+}
+#pragma warning pop
 
-    TXSTA = 0x26;
-    RCSTA = 0x90;
-    SPBRG = 25;
-    PIR1bits.TXIF = 0;
-    PIR1bits.RCIF = 0;
-
+float
+__eetoft(__eeprom void *addr)
+{
+ float data;
+ __eecpymem((unsigned char *) &data,addr,3);
+ return data;
 }
 
-void MCU_Init() {
-    TRISC = 0xB8;
-    TRISB = 0x00;
-    TRISD = 0xF0;
+double
+__eetofl(__eeprom void *addr)
+{
+ double data;
+ __eecpymem((unsigned char *) &data,addr,4);
+ return data;
 }
 
-void SEND_Tx(char dato) {
-    while (TXSTAbits.TRMT == 0) {
-    };
-    TXREG = dato;
+float
+__fttoee(__eeprom void *addr, float data)
+{
+ __memcpyee(addr,(unsigned char *) &data,3);
+ return data;
 }
 
-void MSG_Term(const char *s) {
-    while (*s) SEND_Tx(*s++);
-    SEND_Tx(0x0D);
-    SEND_Tx(0x0A);
-}
-char TECLADO() {
-    char Tecla = 1;
-    char VPTOD = 0x0E;
-
-    do {
-        PORTD = VPTOD;
-        if (PORTDbits.RD4 == 0) goto Antirrebote;
-        Tecla++;
-        if (PORTDbits.RD5 == 0) goto Antirrebote;
-        Tecla++;
-        if (PORTDbits.RD6 == 0) goto Antirrebote;
-        Tecla++;
-        if (PORTDbits.RD7 == 0) goto Antirrebote;
-        Tecla++;
-        VPTOD = (char) (VPTOD << 1) | 1;
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-
-    } while (Tecla < 17);
-    PORTD = 0xFF;
-    return 0;
-
-Antirrebote:
-    while (PORTDbits.RD4 == 0) {
-    };
-    while (PORTDbits.RD5 == 0) {
-    };
-    while (PORTDbits.RD6 == 0) {
-    };
-    while (PORTDbits.RD7 == 0) {
-    };
-    _delay((unsigned long)((100)*(4000000/4000.0)));
-    PORTD = 0xFF;
-    switch (Tecla) {
-        case 1:
-            return '1';
-        case 2:
-            return '2';
-        case 3:
-            return '3';
-        case 4:
-            return 0x0A;
-        case 5:
-            return '4';
-        case 6:
-            return '5';
-        case 7:
-            return '6';
-        case 8:
-            return 0x0B;
-        case 9:
-            return '7';
-        case 10:
-            return '8';
-        case 11:
-            return '9';
-        case 12:
-            return 0x0C;
-        case 13:
-            return 'n';
-        case 14:
-            return '0';
-        case 15:
-            return 'f';
-        case 16:
-            return 0x0D;
-        default:
-            break;
-
-    }
-    return 0;
-}
-
-
-void RecibeHHMM() {
-    char Car, Datos[4];
-    SEND_CMD(0x01);
-
-    SEND_MSJ(0x80, "Escriba la Hora:");
-    SEND_MSJ(0x80, "HH/MM");
-
-    Car = TECLADO();
-    Datos[3] = Car;
-    Car = TECLADO();
-    Datos[2] = Car;
-    Car = TECLADO();
-    Datos[1] = Car;
-    Car = TECLADO();
-    Datos[0] = Car;
-    SEND_CMD(0x80 + 20);
-    SEND_CHAR(Datos[3]);
-    SEND_CHAR(Datos[2]);
-    SEND_CHAR(':');
-    SEND_CHAR(Datos[1]);
-    SEND_CHAR(Datos[0]);
-
-
-    Write_Byte_To_DS1307_RTC(2, (Datos[3] << 4)+ (Datos[2]& 0x0F));
-    Write_Byte_To_DS1307_RTC(1, (Datos[1] << 4)+ (Datos[0]& 0x0F));
-    Write_Byte_To_DS1307_RTC(0, 0);
-
-}
-
-char Deco_num(char dato) {
-    switch (dato) {
-        case 0:
-            return '0';
-        case 1:
-            return '1';
-        case 2:
-            return '2';
-        case 3:
-            return '3';
-        case 4:
-            return '4';
-        case 5:
-            return '5';
-        case 6:
-            return '6';
-        case 7:
-            return '7';
-        case 8:
-            return '8';
-        case 9:
-            return '9';
-        default:
-            return ' ';
-    }
-}
-void deco_mes(char addr,char Car) {
-    switch (Car) {
-        case 1:
-            SEND_MSJ(addr, "ENE");
-            break;
-        case 2:
-            SEND_MSJ(addr, "FEB");
-            break;
-        case 3:
-            SEND_MSJ(addr, "MAR");
-            break;
-        case 4:
-            SEND_MSJ(addr, "ABR");
-            break;
-        case 5:
-            SEND_MSJ(addr, "MAY");
-            break;
-        case 6:
-            SEND_MSJ(addr, "JUN");
-            break;
-        case 7:
-            SEND_MSJ(addr, "JUL");
-            break;
-        case 8:
-            SEND_MSJ(addr, "AGO");
-            break;
-        case 9:
-            SEND_MSJ(addr, "SEP");
-            break;
-        case 0x10:
-            SEND_MSJ(addr, "OCT");
-            break;
-        case 0x11:
-            SEND_MSJ(addr, "NOV");
-            break;
-        case 0x12:
-            SEND_MSJ(addr, "DIC");
-            break;
-        default:
-            SEND_CHAR(((Car >> 4) & 0x0F) + 0x30);
-            SEND_CHAR((Car & 0x0F) + 0x30);
-            break;
-
-    }
-}
-
-
-void ESCRIBA_SEE(char addr, char dato) {
-
-    I2C_Start();
-
-
-    while (I2C_Write_Byte(0xA0 + 0) == 1) {
-        I2C_Start();
-    }
-
-    I2C_Write_Byte(0);
-    I2C_Write_Byte(addr);
-    I2C_Write_Byte(dato);
-    I2C_Stop();
-}
-
-
-
-void RecibeALARMAS(char addr) {
-    char Car, Datos[10], aux1, aux2,ctr;
-    SEND_CMD(0x01);
-
-    SEND_MSJ(0x80, "Escriba alarma ");
-    aux1 = addr / 10;
-    aux2 = aux1 * 10 - addr;
-    SEND_CHAR(Deco_num(aux1));
-    SEND_CHAR(Deco_num(aux2));
-    SEND_MSJ(0xC0, "AA/MM/DD HH:MM");
-    SEND_MSJ(0x80+20, "*=on #=off ");
-    SEND_CHAR('a');
-    _delay((unsigned long)((2000)*(4000000/4000.0)));
-    SEND_CMD(1);
-
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[9] = Car;
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[8] = Car;
-
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[7] = Car;
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[6] = Car;
-
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[5] = Car;
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[4] = Car;
-
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[3] = Car;
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[2] = Car;
-
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[1] = Car;
-    Car = TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    Datos[0] = Car;
-
-    Car=TECLADO();
-    while (Car == 0){
-        Car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-
-    if (Car == 'n'){
-        ctr = 1;
-    }
-    else{
-        ctr = 0;
-    }
-# 395 "main.c"
-    SEND_CMD(0x80);
-
-    SEND_CHAR(Datos[3]);
-    SEND_CHAR(Datos[2]);
-    SEND_CHAR(':');
-
-    SEND_CHAR(Datos[1]);
-    SEND_CHAR(Datos[0]);
-
-    if (ctr==1){
-        SEND_MSJ(0x80+15,"On");
-    }else {
-        SEND_MSJ(0x80+15,"Off");
-    }
-
-    SEND_CMD(0xC0);
-    SEND_CHAR(Datos[5]);
-    SEND_CHAR(Datos[4]);
-    SEND_CHAR('/');
-
-    deco_mes(0xC0 + 2, ((Datos[7] << 4)+ (Datos[6]& 0x0F)));
-    SEND_CHAR('/');
-
-    SEND_CHAR(Datos[9]);
-    SEND_CHAR(Datos[8]);
-
-    ESCRIBA_SEE(addr++, (Datos[3] << 4)+ (Datos[2]& 0x0F));
-    _delay((unsigned long)((10)*(4000000/4000.0)));
-    ESCRIBA_SEE(addr++, (Datos[1] << 4)+ (Datos[0]& 0x0F));
-    _delay((unsigned long)((10)*(4000000/4000.0)));
-    ESCRIBA_SEE(addr++, (Datos[5] << 4)+ (Datos[4]& 0x0F));
-    _delay((unsigned long)((10)*(4000000/4000.0)));
-    ESCRIBA_SEE(addr++, (Datos[7] << 4)+ (Datos[6]& 0x0F));
-    _delay((unsigned long)((10)*(4000000/4000.0)));
-    ESCRIBA_SEE(addr++, (Datos[9] << 4)+ (Datos[8]& 0x0F));
-    _delay((unsigned long)((10)*(4000000/4000.0)));
-    ESCRIBA_SEE(addr++, ctr);
-    _delay((unsigned long)((10)*(4000000/4000.0)));
-    return;
-}
-
-
-void LEA_FECHA() {
-    char fecha[6];
-
-    SEND_CMD(0x01);
-
-    SEND_MSJ(0x80, "Teclee día (DD):");
-    char car = 0;
-    while (car == 0) {
-        car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    SEND_CHAR(car);
-    fecha[0] = car;
-
-    car = 0;
-    while (car == 0) {
-        car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-    SEND_CHAR(car);
-    fecha[1] = car;
-
-    _delay((unsigned long)((200)*(4000000/4000.0)));
-
-
-    SEND_CMD(0x01);
-
-    SEND_MSJ(0x80, "Teclee mes (MM):");
-
-
-    car = 0;
-    while (car == 0) {
-        car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-
-    }
-    SEND_CHAR(car);
-    fecha[3] = car;
-    _delay((unsigned long)((200)*(4000000/4000.0)));
-
-
-    SEND_CMD(0x01);
-
-    SEND_MSJ(0x80,"Teclee año (AA):");
-    car = 0;
-    while (car == 0) {
-        car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-
-    }
-
-    SEND_CHAR(car);
-    fecha[4] = car;
-
-    car = 0;
-    while (car == 0) {
-        car = TECLADO();
-        _delay((unsigned long)((10)*(4000000/4000.0)));
-    }
-
-    SEND_CHAR(car);
-    fecha[5] = car;
-    _delay((unsigned long)((200)*(4000000/4000.0)));
-
-    SEND_CMD(1);
-
-    char DIA = (fecha[0] << 4) + (fecha[1]&0x0F);
-    Write_Byte_To_DS1307_RTC(4, DIA);
-
-    char MES = (fecha[2] << 4) + (fecha[3]&0x0F);
-    Write_Byte_To_DS1307_RTC(5, MES);
-
-    char ANNO = (fecha[4] << 4) + (fecha[5]&0x0F);
-    Write_Byte_To_DS1307_RTC(6, ANNO);
-
-}
-
-
-
-char LEA_SEE(char Address)
- {
-    unsigned char Byte = 0;
-
-    I2C_Start();
-
-    while (I2C_Write_Byte(0xA0 + 0) == 1) {
-        I2C_Start();
-    }
-
-    I2C_Write_Byte(0);
-    I2C_Write_Byte(Address);
-    I2C_ReStart();
-
-    I2C_Write_Byte(0xA0 + 1);
-
-    Byte = I2C_Read_Byte();
-
-    I2C_Send_NACK();
-    I2C_Stop();
-
-    return Byte;
-}
-
-
-
-
-void deco_dia(char sel) {
-    switch (sel) {
-        case 0:
-            SEND_MSJ(0xC0, "Lunes");
-            return;
-            break;
-        case 1:
-            SEND_MSJ(0xC0, "Martes");
-            return;
-            break;
-        case 2:
-            SEND_MSJ(0xC0, "Miercoles");
-            return;
-            break;
-        case 3:
-            SEND_MSJ(0xC0, "Jueves");
-            return;
-            break;
-        case 4:
-            SEND_MSJ(0xC0, "Viernes");
-            return;
-            break;
-        case 5:
-            SEND_MSJ(0xC0, "Sabado");
-            return;
-            break;
-        case 6:
-            SEND_MSJ(0xC0, "Domingo");
-            return;
-            break;
-        default:
-            return;
-            break;
-    }
-}
-
-void anti_r() {
-    char Car;
-    while (Car != 'r') {
-        if (PIR1bits.RCIF == 1) {
-
-            Car = RCREG;
-            PIR1bits.RCIF = 0;
-        }
-    }
-    return;
-}
-void Buzz_on(){
-    PORTCbits.RC5=0;
-}
-void Buzz_off(){
-    PORTCbits.RC5=1;
-}
-void melodia(){
-
-    Buzz_on();
-    _delay((unsigned long)((300)*(4000000/4000.0)));
-    Buzz_off();
-    _delay((unsigned long)((700)*(4000000/4000.0)));
-}
-
-void main(void) {
-    char Car;
-    MCU_Init();
-    LCD_Init();
-    UART_Init();
-    InitI2C();
-
-    SEND_MSJ(0x80,"MPEI LAB 6");
-
-    SEND_MSJ(0xC0 , "    RTC DS1307   ");
-
-    SEND_MSJ(0x80 + 20, "Lectura y escritura");
-
-    SEND_MSJ(0xC0 + 20, "ALARMAS EEPROM");
-
-    _delay((unsigned long)((2000)*(4000000/4000.0)));
-
-    SEND_CMD(1);
-    MSG_Term("Hasta acá llegué");
-    while (1) {
-        if (PIR1bits.RCIF == 1) {
-            Car = RCREG;
-            PIR1bits.RCIF = 0;
-            MSG_Term("Hasta acá llegué");
-
-        switch (Car){
-            case '1':
-                anti_r();
-                RecibeALARMAS(0);
-                MSG_Term("1");
-
-            case '2':
-                anti_r();
-                RecibeALARMAS(8);
-
-            case '3':
-                anti_r();
-                RecibeALARMAS(16);
-            case '4':
-                anti_r();
-                RecibeALARMAS(24);
-            case '5':
-                anti_r();
-                RecibeALARMAS(32);
-            case '6':
-                anti_r();
-                RecibeALARMAS(40);
-            case '7':
-                anti_r();
-                RecibeALARMAS(48);
-            case '8':
-                anti_r();
-                RecibeALARMAS(56);
-            case '9':
-                anti_r();
-                RecibeALARMAS(64);
-            case '0':
-                anti_r();
-                RecibeALARMAS(72);
-            }
-        }
-
-
-        SEND_CMD(0x80+0);
-
-        Car = Read_Byte_From_DS1307_RTC(2);
-        SEND_CHAR(((Car>>4) & 0x0F)+0x30);
-        SEND_CHAR((Car & 0x0F) + 0x30);
-
-        SEND_CHAR(':');
-
-        Car = Read_Byte_From_DS1307_RTC(1);
-        SEND_CHAR(((Car>>4) & 0x0F)+0x30);
-        SEND_CHAR((Car & 0x0F) + 0x30);
-
-        SEND_CHAR(':');
-
-        Car = Read_Byte_From_DS1307_RTC(0);
-        SEND_CHAR(((Car>>4) & 0x0F)+0x30);
-        SEND_CHAR((Car & 0x0F) + 0x30);
-
-        SEND_CMD(0xC0);
-
-        Car = Read_Byte_From_DS1307_RTC(4);
-        SEND_CHAR(((Car>>4) & 0x03)+0x30);
-        SEND_CHAR((Car & 0x0F) + 0x30);
-
-        SEND_CHAR('/');
-
-        Car = Read_Byte_From_DS1307_RTC(5);
-
-        deco_mes(0xC0+4,(Car));
-        SEND_CHAR('/');
-
-        Car = Read_Byte_From_DS1307_RTC(6);
-        SEND_CHAR(((Car >> 4) & 0x0F) + 0x30);
-        SEND_CHAR((Car & 0x0F) + 0x30);
-
-
-        _delay((unsigned long)((1000)*(4000000/4000.0)));
-
-
-    }
+double
+__fltoee(__eeprom void *addr, double data)
+{
+ __memcpyee(addr,(unsigned char *) &data,4);
+ return data;
 }

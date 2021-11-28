@@ -115,9 +115,6 @@ Version 4.0 HI-TECH Software Intermediate Code
 "1060
 [; ;C:\Program Files\Microchip\xc8\v2.32\pic\include\proc\pic16f877a.h: 1060: extern volatile unsigned char TXREG __attribute__((address(0x019)));
 [v _TXREG `Vuc ~T0 @X0 0 e@25 ]
-"1067
-[; ;C:\Program Files\Microchip\xc8\v2.32\pic\include\proc\pic16f877a.h: 1067: extern volatile unsigned char RCREG __attribute__((address(0x01A)));
-[v _RCREG `Vuc ~T0 @X0 0 e@26 ]
 "341
 [; ;C:\Program Files\Microchip\xc8\v2.32\pic\include\proc\pic16f877a.h: 341: extern volatile unsigned char PORTD __attribute__((address(0x008)));
 [v _PORTD `Vuc ~T0 @X0 0 e@8 ]
@@ -132,6 +129,9 @@ Version 4.0 HI-TECH Software Intermediate Code
 "358
 [; ;C:\Program Files\Microchip\xc8\v2.32\pic\include\proc\pic16f877a.h: 358: extern volatile PORTDbits_t PORTDbits __attribute__((address(0x008)));
 [v _PORTDbits `VS11 ~T0 @X0 0 e@8 ]
+"1067
+[; ;C:\Program Files\Microchip\xc8\v2.32\pic\include\proc\pic16f877a.h: 1067: extern volatile unsigned char RCREG __attribute__((address(0x01A)));
+[v _RCREG `Vuc ~T0 @X0 0 e@26 ]
 [p mainexit ]
 "11 main.c
 [p x FOSC  =  XT         ]
@@ -1012,53 +1012,41 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;./DS1307.c: 237: }
 [e :UE 160 ]
 }
-"32 main.c
-[; ;main.c: 32: void SEND_CMD(char dato)
+"34 main.c
+[; ;main.c: 34: void SEND_CMD(char dato) {
 [v _SEND_CMD `(v ~T0 @X0 1 ef1`uc ]
-"33
-[; ;main.c: 33: {
 {
 [e :U _SEND_CMD ]
-"32
-[; ;main.c: 32: void SEND_CMD(char dato)
 [v _dato `uc ~T0 @X0 1 r1 ]
-"33
-[; ;main.c: 33: {
 [f ]
-"34
-[; ;main.c: 34:     PORTCbits.RC1 = 0;
-[e = . . _PORTCbits 0 1 -> -> 0 `i `uc ]
 "35
-[; ;main.c: 35:     PORTCbits.RC0 = 0;
-[e = . . _PORTCbits 0 0 -> -> 0 `i `uc ]
+[; ;main.c: 35:     PORTCbits.RC1 = 0;
+[e = . . _PORTCbits 0 1 -> -> 0 `i `uc ]
 "36
-[; ;main.c: 36:     PORTCbits.RC2 = 1;
-[e = . . _PORTCbits 0 2 -> -> 1 `i `uc ]
+[; ;main.c: 36:     PORTCbits.RC0 = 0;
+[e = . . _PORTCbits 0 0 -> -> 0 `i `uc ]
 "37
-[; ;main.c: 37:     PORTB = dato;
-[e = _PORTB -> _dato `uc ]
+[; ;main.c: 37:     PORTCbits.RC2 = 1;
+[e = . . _PORTCbits 0 2 -> -> 1 `i `uc ]
 "38
-[; ;main.c: 38:     PORTCbits.RC2 = 0;
-[e = . . _PORTCbits 0 2 -> -> 0 `i `uc ]
+[; ;main.c: 38:     PORTB = dato;
+[e = _PORTB -> _dato `uc ]
 "39
-[; ;main.c: 39:     _delay((unsigned long)((2)*(4000000/4000.0)));
+[; ;main.c: 39:     PORTCbits.RC2 = 0;
+[e = . . _PORTCbits 0 2 -> -> 0 `i `uc ]
+"40
+[; ;main.c: 40:     _delay((unsigned long)((2)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 2 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"41
-[; ;main.c: 41: }
+"42
+[; ;main.c: 42: }
 [e :UE 161 ]
 }
-"43
-[; ;main.c: 43: void SEND_CHAR(char dato)
-[v _SEND_CHAR `(v ~T0 @X0 1 ef1`uc ]
 "44
-[; ;main.c: 44: {
+[; ;main.c: 44: void SEND_CHAR(char dato) {
+[v _SEND_CHAR `(v ~T0 @X0 1 ef1`uc ]
 {
 [e :U _SEND_CHAR ]
-"43
-[; ;main.c: 43: void SEND_CHAR(char dato)
 [v _dato `uc ~T0 @X0 1 r1 ]
-"44
-[; ;main.c: 44: {
 [f ]
 "45
 [; ;main.c: 45:     PORTCbits.RC1 = 0;
@@ -1073,7 +1061,7 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;main.c: 48:     PORTB = dato;
 [e = _PORTB -> _dato `uc ]
 "49
-[; ;main.c: 49:     PORTCbits.RC2=0;
+[; ;main.c: 49:     PORTCbits.RC2 = 0;
 [e = . . _PORTCbits 0 2 -> -> 0 `i `uc ]
 "50
 [; ;main.c: 50:     _delay((unsigned long)((1)*(4000000/4000.0)));
@@ -1083,153 +1071,150 @@ Version 4.0 HI-TECH Software Intermediate Code
 [e :UE 162 ]
 }
 "53
-[; ;main.c: 53: void LCD_Init()
+[; ;main.c: 53: void LCD_Init() {
 [v _LCD_Init `(v ~T0 @X0 1 ef ]
-"54
-[; ;main.c: 54: {
 {
 [e :U _LCD_Init ]
 [f ]
-"55
-[; ;main.c: 55:     _delay((unsigned long)((20)*(4000000/4000.0)));
+"54
+[; ;main.c: 54:     _delay((unsigned long)((20)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 20 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"56
-[; ;main.c: 56:     SEND_CMD(0x38);
+"55
+[; ;main.c: 55:     SEND_CMD(0x38);
 [e ( _SEND_CMD (1 -> -> 56 `i `uc ]
-"57
-[; ;main.c: 57:     SEND_CMD(0x0C);
+"56
+[; ;main.c: 56:     SEND_CMD(0x0C);
 [e ( _SEND_CMD (1 -> -> 12 `i `uc ]
-"58
-[; ;main.c: 58:     SEND_CMD(0x06);
+"57
+[; ;main.c: 57:     SEND_CMD(0x06);
 [e ( _SEND_CMD (1 -> -> 6 `i `uc ]
-"59
-[; ;main.c: 59:     SEND_CMD(0x01);
+"58
+[; ;main.c: 58:     SEND_CMD(0x01);
 [e ( _SEND_CMD (1 -> -> 1 `i `uc ]
-"60
-[; ;main.c: 60: }
+"59
+[; ;main.c: 59: }
 [e :UE 163 ]
 }
-"62
-[; ;main.c: 62: void EscribeCadenaLCD (const char *s)
-[v _EscribeCadenaLCD `(v ~T0 @X0 1 ef1`*Cuc ]
-"63
-[; ;main.c: 63: {
+"61
+[; ;main.c: 61: void SEND_MSJ(char POS, char *Msj) {
+[v _SEND_MSJ `(v ~T0 @X0 1 ef2`uc`*uc ]
 {
-[e :U _EscribeCadenaLCD ]
-"62
-[; ;main.c: 62: void EscribeCadenaLCD (const char *s)
-[v _s `*Cuc ~T0 @X0 1 r1 ]
-"63
-[; ;main.c: 63: {
+[e :U _SEND_MSJ ]
+[v _POS `uc ~T0 @X0 1 r1 ]
+[v _Msj `*uc ~T0 @X0 1 r2 ]
 [f ]
+"62
+[; ;main.c: 62:     char carac;
+[v _carac `uc ~T0 @X0 1 a ]
+"63
+[; ;main.c: 63:     SEND_CMD(POS);
+[e ( _SEND_CMD (1 _POS ]
 "64
-[; ;main.c: 64:     while(*s)
+[; ;main.c: 64:     while (*Msj != 0x00) {
 [e $U 165  ]
 [e :U 166 ]
+{
 "65
-[; ;main.c: 65:         SEND_CHAR(*s++);
-[e ( _SEND_CHAR (1 *U ++ _s * -> -> 1 `i `x -> -> # *U _s `i `x ]
+[; ;main.c: 65:         carac = (char) *Msj;
+[e = _carac *U _Msj ]
+"66
+[; ;main.c: 66:         SEND_CHAR(carac);
+[e ( _SEND_CHAR (1 _carac ]
+"67
+[; ;main.c: 67:         Msj++;
+[e ++ _Msj * -> -> 1 `i `x -> -> # *U _Msj `i `x ]
+"68
+[; ;main.c: 68:     }
+}
 [e :U 165 ]
 "64
-[; ;main.c: 64:     while(*s)
-[e $ != -> *U _s `i -> 0 `i 166  ]
+[; ;main.c: 64:     while (*Msj != 0x00) {
+[e $ != -> *U _Msj `i -> 0 `i 166  ]
 [e :U 167 ]
-"67
-[; ;main.c: 67: }
+"70
+[; ;main.c: 70: }
 [e :UE 164 ]
 }
-"69
-[; ;main.c: 69: void UART_Init()
+"72
+[; ;main.c: 72: void UART_Init() {
 [v _UART_Init `(v ~T0 @X0 1 ef ]
-"70
-[; ;main.c: 70: {
 {
 [e :U _UART_Init ]
 [f ]
-"72
-[; ;main.c: 72:     TXSTA = 0x26;
-[e = _TXSTA -> -> 38 `i `uc ]
-"73
-[; ;main.c: 73:     RCSTA = 0x90;
-[e = _RCSTA -> -> 144 `i `uc ]
 "74
-[; ;main.c: 74:     SPBRG = 25;
-[e = _SPBRG -> -> 25 `i `uc ]
+[; ;main.c: 74:     TXSTA = 0x26;
+[e = _TXSTA -> -> 38 `i `uc ]
 "75
-[; ;main.c: 75:     PIR1bits.TXIF = 0;
-[e = . . _PIR1bits 0 4 -> -> 0 `i `uc ]
+[; ;main.c: 75:     RCSTA = 0x90;
+[e = _RCSTA -> -> 144 `i `uc ]
 "76
-[; ;main.c: 76:     PIR1bits.RCIF = 0;
-[e = . . _PIR1bits 0 5 -> -> 0 `i `uc ]
+[; ;main.c: 76:     SPBRG = 25;
+[e = _SPBRG -> -> 25 `i `uc ]
+"77
+[; ;main.c: 77:     PIR1bits.TXIF = 0;
+[e = . . _PIR1bits 0 4 -> -> 0 `i `uc ]
 "78
-[; ;main.c: 78: }
+[; ;main.c: 78:     PIR1bits.RCIF = 0;
+[e = . . _PIR1bits 0 5 -> -> 0 `i `uc ]
+"80
+[; ;main.c: 80: }
 [e :UE 168 ]
 }
-"80
-[; ;main.c: 80: void MCU_Init()
+"82
+[; ;main.c: 82: void MCU_Init() {
 [v _MCU_Init `(v ~T0 @X0 1 ef ]
-"81
-[; ;main.c: 81: {
 {
 [e :U _MCU_Init ]
 [f ]
-"82
-[; ;main.c: 82:     TRISC= 0xB8;
-[e = _TRISC -> -> 184 `i `uc ]
 "83
-[; ;main.c: 83:     TRISB = 0x00;
-[e = _TRISB -> -> 0 `i `uc ]
+[; ;main.c: 83:     TRISC = 0xB8;
+[e = _TRISC -> -> 184 `i `uc ]
 "84
-[; ;main.c: 84:     TRISD = 0xF0;
-[e = _TRISD -> -> 240 `i `uc ]
+[; ;main.c: 84:     TRISB = 0x00;
+[e = _TRISB -> -> 0 `i `uc ]
 "85
-[; ;main.c: 85: }
+[; ;main.c: 85:     TRISD = 0xF0;
+[e = _TRISD -> -> 240 `i `uc ]
+"86
+[; ;main.c: 86: }
 [e :UE 169 ]
 }
-"87
-[; ;main.c: 87: void SEND_Tx(char dato)
-[v _SEND_Tx `(v ~T0 @X0 1 ef1`uc ]
 "88
-[; ;main.c: 88: {
+[; ;main.c: 88: void SEND_Tx(char dato) {
+[v _SEND_Tx `(v ~T0 @X0 1 ef1`uc ]
 {
 [e :U _SEND_Tx ]
-"87
-[; ;main.c: 87: void SEND_Tx(char dato)
 [v _dato `uc ~T0 @X0 1 r1 ]
-"88
-[; ;main.c: 88: {
 [f ]
 "89
-[; ;main.c: 89:     while(TXSTAbits.TRMT == 0){};
+[; ;main.c: 89:     while (TXSTAbits.TRMT == 0) {
 [e $U 171  ]
 [e :U 172 ]
 {
+"90
+[; ;main.c: 90:     };
 }
 [e :U 171 ]
+"89
+[; ;main.c: 89:     while (TXSTAbits.TRMT == 0) {
 [e $ == -> . . _TXSTAbits 0 1 `i -> 0 `i 172  ]
 [e :U 173 ]
-"90
-[; ;main.c: 90:     TXREG = dato;
-[e = _TXREG -> _dato `uc ]
 "91
-[; ;main.c: 91: }
+[; ;main.c: 91:     TXREG = dato;
+[e = _TXREG -> _dato `uc ]
+"92
+[; ;main.c: 92: }
 [e :UE 170 ]
 }
-"93
-[; ;main.c: 93: void MSG_Term(const char *s)
-[v _MSG_Term `(v ~T0 @X0 1 ef1`*Cuc ]
 "94
-[; ;main.c: 94: {
+[; ;main.c: 94: void MSG_Term(const char *s) {
+[v _MSG_Term `(v ~T0 @X0 1 ef1`*Cuc ]
 {
 [e :U _MSG_Term ]
-"93
-[; ;main.c: 93: void MSG_Term(const char *s)
 [v _s `*Cuc ~T0 @X0 1 r1 ]
-"94
-[; ;main.c: 94: {
 [f ]
 "95
-[; ;main.c: 95: while(*s) SEND_Tx(*s++);
+[; ;main.c: 95:     while (*s) SEND_Tx(*s++);
 [e $U 175  ]
 [e :U 176 ]
 [e ( _SEND_Tx (1 *U ++ _s * -> -> 1 `i `x -> -> # *U _s `i `x ]
@@ -1246,1105 +1231,1894 @@ Version 4.0 HI-TECH Software Intermediate Code
 [; ;main.c: 98: }
 [e :UE 174 ]
 }
-"100
-[; ;main.c: 100: void RecibeHHMM()
-[v _RecibeHHMM `(v ~T0 @X0 1 ef ]
-"101
-[; ;main.c: 101: {
-{
-[e :U _RecibeHHMM ]
-[f ]
-"102
-[; ;main.c: 102:     char Car, Datos[4];
-[v _Car `uc ~T0 @X0 1 a ]
-[v _Datos `uc ~T0 @X0 -> 4 `i a ]
-"103
-[; ;main.c: 103:     SEND_CMD(0x01);
-[e ( _SEND_CMD (1 -> -> 1 `i `uc ]
-"105
-[; ;main.c: 105:     MSG_Term("Escriba la Hora:");
-[e ( _MSG_Term (1 :s 1C ]
-"107
-[; ;main.c: 107:     while(PIR1bits.RCIF == 0);
-[e $U 179  ]
-[e :U 180 ]
-[e :U 179 ]
-[e $ == -> . . _PIR1bits 0 5 `i -> 0 `i 180  ]
-[e :U 181 ]
-"108
-[; ;main.c: 108:     if(PIR1bits.RCIF == 1)
-[e $ ! == -> . . _PIR1bits 0 5 `i -> 1 `i 182  ]
-"109
-[; ;main.c: 109:         {
-{
-"110
-[; ;main.c: 110:             Car = RCREG;
-[e = _Car -> _RCREG `uc ]
-"111
-[; ;main.c: 111:             PIR1bits.RCIF = 0;
-[e = . . _PIR1bits 0 5 -> -> 0 `i `uc ]
-"112
-[; ;main.c: 112:             Datos[3] = Car;
-[e = *U + &U _Datos * -> -> -> 3 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
-"113
-[; ;main.c: 113:             SEND_Tx(Car);
-[e ( _SEND_Tx (1 _Car ]
-"114
-[; ;main.c: 114:         }
-}
-[e :U 182 ]
-"115
-[; ;main.c: 115:     while(PIR1bits.RCIF == 0);
-[e $U 183  ]
-[e :U 184 ]
-[e :U 183 ]
-[e $ == -> . . _PIR1bits 0 5 `i -> 0 `i 184  ]
-[e :U 185 ]
-"116
-[; ;main.c: 116:     if(PIR1bits.RCIF == 1)
-[e $ ! == -> . . _PIR1bits 0 5 `i -> 1 `i 186  ]
-"117
-[; ;main.c: 117:         {
-{
-"118
-[; ;main.c: 118:             Car = RCREG;
-[e = _Car -> _RCREG `uc ]
-"119
-[; ;main.c: 119:             PIR1bits.RCIF = 0;
-[e = . . _PIR1bits 0 5 -> -> 0 `i `uc ]
-"120
-[; ;main.c: 120:             Datos[2] = Car;
-[e = *U + &U _Datos * -> -> -> 2 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
-"121
-[; ;main.c: 121:             SEND_Tx(Car);
-[e ( _SEND_Tx (1 _Car ]
-"122
-[; ;main.c: 122:             SEND_Tx(0x0D);
-[e ( _SEND_Tx (1 -> -> 13 `i `uc ]
-"123
-[; ;main.c: 123:             SEND_Tx(0x0A);
-[e ( _SEND_Tx (1 -> -> 10 `i `uc ]
-"124
-[; ;main.c: 124:         }
-}
-[e :U 186 ]
-"126
-[; ;main.c: 126:     MSG_Term("Escriba los minutos:");
-[e ( _MSG_Term (1 :s 2C ]
-"127
-[; ;main.c: 127:     while(PIR1bits.RCIF == 0);
-[e $U 187  ]
-[e :U 188 ]
-[e :U 187 ]
-[e $ == -> . . _PIR1bits 0 5 `i -> 0 `i 188  ]
-[e :U 189 ]
-"128
-[; ;main.c: 128:     if (PIR1bits.RCIF == 1)
-[e $ ! == -> . . _PIR1bits 0 5 `i -> 1 `i 190  ]
-"129
-[; ;main.c: 129:         {
-{
-"130
-[; ;main.c: 130:             Car = RCREG;
-[e = _Car -> _RCREG `uc ]
-"131
-[; ;main.c: 131:             PIR1bits.RCIF = 0;
-[e = . . _PIR1bits 0 5 -> -> 0 `i `uc ]
-"132
-[; ;main.c: 132:             Datos[1] = Car;
-[e = *U + &U _Datos * -> -> -> 1 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
-"133
-[; ;main.c: 133:             SEND_Tx(Car);
-[e ( _SEND_Tx (1 _Car ]
-"134
-[; ;main.c: 134:         }
-}
-[e :U 190 ]
-"136
-[; ;main.c: 136:     while(PIR1bits.RCIF == 0);
-[e $U 191  ]
-[e :U 192 ]
-[e :U 191 ]
-[e $ == -> . . _PIR1bits 0 5 `i -> 0 `i 192  ]
-[e :U 193 ]
-"137
-[; ;main.c: 137:     if(PIR1bits.RCIF == 1)
-[e $ ! == -> . . _PIR1bits 0 5 `i -> 1 `i 194  ]
-"138
-[; ;main.c: 138:         {
-{
-"139
-[; ;main.c: 139:             Car = RCREG;
-[e = _Car -> _RCREG `uc ]
-"140
-[; ;main.c: 140:             PIR1bits.RCIF = 0;
-[e = . . _PIR1bits 0 5 -> -> 0 `i `uc ]
-"141
-[; ;main.c: 141:             Datos[0] = Car;
-[e = *U + &U _Datos * -> -> -> 0 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
-"142
-[; ;main.c: 142:             SEND_Tx(Car);
-[e ( _SEND_Tx (1 _Car ]
-"143
-[; ;main.c: 143:             SEND_Tx(0x0D);
-[e ( _SEND_Tx (1 -> -> 13 `i `uc ]
-"144
-[; ;main.c: 144:             SEND_Tx(0x0A);
-[e ( _SEND_Tx (1 -> -> 10 `i `uc ]
-"145
-[; ;main.c: 145:         }
-}
-[e :U 194 ]
-"149
-[; ;main.c: 149:     Write_Byte_To_DS1307_RTC(2,(Datos[3]<<4)+ (Datos[2]& 0x0F));
-[e ( _Write_Byte_To_DS1307_RTC (2 , -> -> 2 `i `uc -> + << -> *U + &U _Datos * -> -> -> 3 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 4 `i & -> *U + &U _Datos * -> -> -> 2 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 15 `i `uc ]
-"150
-[; ;main.c: 150:     Write_Byte_To_DS1307_RTC(1,(Datos[1]<<4)+ (Datos[0]& 0x0F));
-[e ( _Write_Byte_To_DS1307_RTC (2 , -> -> 1 `i `uc -> + << -> *U + &U _Datos * -> -> -> 1 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 4 `i & -> *U + &U _Datos * -> -> -> 0 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 15 `i `uc ]
-"151
-[; ;main.c: 151:     Write_Byte_To_DS1307_RTC(0,0);
-[e ( _Write_Byte_To_DS1307_RTC (2 , -> -> 0 `i `uc -> -> 0 `i `uc ]
-"153
-[; ;main.c: 153: }
-[e :UE 178 ]
-}
-"155
-[; ;main.c: 155: char TECLADO(){
+"99
+[; ;main.c: 99: char TECLADO() {
 [v _TECLADO `(uc ~T0 @X0 1 ef ]
 {
 [e :U _TECLADO ]
 [f ]
-"156
-[; ;main.c: 156:     char Tecla = 1;
+"100
+[; ;main.c: 100:     char Tecla = 1;
 [v _Tecla `uc ~T0 @X0 1 a ]
 [e = _Tecla -> -> 1 `i `uc ]
-"157
-[; ;main.c: 157:     char VPTOD = 0x0E;
+"101
+[; ;main.c: 101:     char VPTOD = 0x0E;
 [v _VPTOD `uc ~T0 @X0 1 a ]
 [e = _VPTOD -> -> 14 `i `uc ]
-"159
-[; ;main.c: 159:     do
-[e :U 198 ]
-"160
-[; ;main.c: 160:     {
+"103
+[; ;main.c: 103:     do {
+[e :U 181 ]
 {
-"161
-[; ;main.c: 161:         PORTD = VPTOD;
+"104
+[; ;main.c: 104:         PORTD = VPTOD;
 [e = _PORTD -> _VPTOD `uc ]
-"162
-[; ;main.c: 162:         if (PORTDbits.RD4 == 0) goto Antirrebote;
-[e $ ! == -> . . _PORTDbits 0 4 `i -> 0 `i 199  ]
-[e $U 200  ]
-[e :U 199 ]
-"163
-[; ;main.c: 163:         Tecla++;
+"105
+[; ;main.c: 105:         if (PORTDbits.RD4 == 0) goto Antirrebote;
+[e $ ! == -> . . _PORTDbits 0 4 `i -> 0 `i 182  ]
+[e $U 183  ]
+[e :U 182 ]
+"106
+[; ;main.c: 106:         Tecla++;
 [e ++ _Tecla -> -> 1 `i `uc ]
-"164
-[; ;main.c: 164:         if (PORTDbits.RD5 == 0) goto Antirrebote;
-[e $ ! == -> . . _PORTDbits 0 5 `i -> 0 `i 201  ]
-[e $U 200  ]
-[e :U 201 ]
-"165
-[; ;main.c: 165:         Tecla++;
+"107
+[; ;main.c: 107:         if (PORTDbits.RD5 == 0) goto Antirrebote;
+[e $ ! == -> . . _PORTDbits 0 5 `i -> 0 `i 184  ]
+[e $U 183  ]
+[e :U 184 ]
+"108
+[; ;main.c: 108:         Tecla++;
 [e ++ _Tecla -> -> 1 `i `uc ]
-"166
-[; ;main.c: 166:         if (PORTDbits.RD6 == 0) goto Antirrebote;
-[e $ ! == -> . . _PORTDbits 0 6 `i -> 0 `i 202  ]
-[e $U 200  ]
-[e :U 202 ]
-"167
-[; ;main.c: 167:         Tecla++;
+"109
+[; ;main.c: 109:         if (PORTDbits.RD6 == 0) goto Antirrebote;
+[e $ ! == -> . . _PORTDbits 0 6 `i -> 0 `i 185  ]
+[e $U 183  ]
+[e :U 185 ]
+"110
+[; ;main.c: 110:         Tecla++;
 [e ++ _Tecla -> -> 1 `i `uc ]
-"168
-[; ;main.c: 168:         if (PORTDbits.RD7 == 0) goto Antirrebote;
-[e $ ! == -> . . _PORTDbits 0 7 `i -> 0 `i 203  ]
-[e $U 200  ]
-[e :U 203 ]
-"169
-[; ;main.c: 169:         Tecla++;
+"111
+[; ;main.c: 111:         if (PORTDbits.RD7 == 0) goto Antirrebote;
+[e $ ! == -> . . _PORTDbits 0 7 `i -> 0 `i 186  ]
+[e $U 183  ]
+[e :U 186 ]
+"112
+[; ;main.c: 112:         Tecla++;
 [e ++ _Tecla -> -> 1 `i `uc ]
-"170
-[; ;main.c: 170:         VPTOD = (char)(VPTOD << 1) | 1;
+"113
+[; ;main.c: 113:         VPTOD = (char) (VPTOD << 1) | 1;
 [e = _VPTOD -> | -> -> << -> _VPTOD `i -> 1 `i `uc `i -> 1 `i `uc ]
-"171
-[; ;main.c: 171:         _delay((unsigned long)((10)*(4000000/4000.0)));
+"114
+[; ;main.c: 114:         _delay((unsigned long)((10)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"173
-[; ;main.c: 173:     } while (Tecla < 17);
+"116
+[; ;main.c: 116:     } while (Tecla < 17);
 }
-[e $ < -> _Tecla `i -> 17 `i 198  ]
+[e $ < -> _Tecla `i -> 17 `i 181  ]
+[e :U 180 ]
+"117
+[; ;main.c: 117:     PORTD = 0xFF;
+[e = _PORTD -> -> 255 `i `uc ]
+"118
+[; ;main.c: 118:     return 0;
+[e ) -> -> 0 `i `uc ]
+[e $UE 178  ]
+"120
+[; ;main.c: 120: Antirrebote:
+[e :U 183 ]
+"121
+[; ;main.c: 121:     while (PORTDbits.RD4 == 0) {
+[e $U 187  ]
+[e :U 188 ]
+{
+"122
+[; ;main.c: 122:     };
+}
+[e :U 187 ]
+"121
+[; ;main.c: 121:     while (PORTDbits.RD4 == 0) {
+[e $ == -> . . _PORTDbits 0 4 `i -> 0 `i 188  ]
+[e :U 189 ]
+"123
+[; ;main.c: 123:     while (PORTDbits.RD5 == 0) {
+[e $U 190  ]
+[e :U 191 ]
+{
+"124
+[; ;main.c: 124:     };
+}
+[e :U 190 ]
+"123
+[; ;main.c: 123:     while (PORTDbits.RD5 == 0) {
+[e $ == -> . . _PORTDbits 0 5 `i -> 0 `i 191  ]
+[e :U 192 ]
+"125
+[; ;main.c: 125:     while (PORTDbits.RD6 == 0) {
+[e $U 193  ]
+[e :U 194 ]
+{
+"126
+[; ;main.c: 126:     };
+}
+[e :U 193 ]
+"125
+[; ;main.c: 125:     while (PORTDbits.RD6 == 0) {
+[e $ == -> . . _PORTDbits 0 6 `i -> 0 `i 194  ]
+[e :U 195 ]
+"127
+[; ;main.c: 127:     while (PORTDbits.RD7 == 0) {
+[e $U 196  ]
 [e :U 197 ]
-"174
-[; ;main.c: 174:     PORTD = 0xFF;
-[e = _PORTD -> -> 255 `i `uc ]
-"175
-[; ;main.c: 175:     return 0;
-[e ) -> -> 0 `i `uc ]
-[e $UE 195  ]
-"177
-[; ;main.c: 177: Antirrebote:
-[e :U 200 ]
-"178
-[; ;main.c: 178:     while(PORTDbits.RD4 == 0) {};
-[e $U 204  ]
-[e :U 205 ]
 {
+"128
+[; ;main.c: 128:     };
 }
-[e :U 204 ]
-[e $ == -> . . _PORTDbits 0 4 `i -> 0 `i 205  ]
-[e :U 206 ]
-"179
-[; ;main.c: 179:     while(PORTDbits.RD5 == 0) {};
-[e $U 207  ]
-[e :U 208 ]
-{
-}
-[e :U 207 ]
-[e $ == -> . . _PORTDbits 0 5 `i -> 0 `i 208  ]
-[e :U 209 ]
-"180
-[; ;main.c: 180:     while(PORTDbits.RD6 == 0) {};
-[e $U 210  ]
-[e :U 211 ]
-{
-}
-[e :U 210 ]
-[e $ == -> . . _PORTDbits 0 6 `i -> 0 `i 211  ]
-[e :U 212 ]
-"181
-[; ;main.c: 181:     while(PORTDbits.RD7 == 0) {};
-[e $U 213  ]
-[e :U 214 ]
-{
-}
-[e :U 213 ]
-[e $ == -> . . _PORTDbits 0 7 `i -> 0 `i 214  ]
-[e :U 215 ]
-"182
-[; ;main.c: 182:     _delay((unsigned long)((100)*(4000000/4000.0)));
+[e :U 196 ]
+"127
+[; ;main.c: 127:     while (PORTDbits.RD7 == 0) {
+[e $ == -> . . _PORTDbits 0 7 `i -> 0 `i 197  ]
+[e :U 198 ]
+"129
+[; ;main.c: 129:     _delay((unsigned long)((100)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 100 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"183
-[; ;main.c: 183:     PORTD = 0xFF;
+"130
+[; ;main.c: 130:     PORTD = 0xFF;
 [e = _PORTD -> -> 255 `i `uc ]
-"184
-[; ;main.c: 184:     switch(Tecla){
-[e $U 217  ]
+"131
+[; ;main.c: 131:     switch (Tecla) {
+[e $U 200  ]
 {
-"185
-[; ;main.c: 185:         case 1:
-[e :U 218 ]
-"186
-[; ;main.c: 186:             return '7';
-[e ) -> -> 55 `ui `uc ]
-[e $UE 195  ]
-"187
-[; ;main.c: 187:         case 2:
-[e :U 219 ]
-"188
-[; ;main.c: 188:             return '8';
-[e ) -> -> 56 `ui `uc ]
-[e $UE 195  ]
-"189
-[; ;main.c: 189:         case 3:
-[e :U 220 ]
-"190
-[; ;main.c: 190:             return '9';
-[e ) -> -> 57 `ui `uc ]
-[e $UE 195  ]
-"191
-[; ;main.c: 191:         case 4:
-[e :U 221 ]
-"192
-[; ;main.c: 192:             return '/';
-[e ) -> -> 47 `ui `uc ]
-[e $UE 195  ]
-"193
-[; ;main.c: 193:         case 5:
-[e :U 222 ]
-"194
-[; ;main.c: 194:             return '4';
-[e ) -> -> 52 `ui `uc ]
-[e $UE 195  ]
-"195
-[; ;main.c: 195:         case 6:
-[e :U 223 ]
-"196
-[; ;main.c: 196:             return '5';
-[e ) -> -> 53 `ui `uc ]
-[e $UE 195  ]
-"197
-[; ;main.c: 197:         case 7:
-[e :U 224 ]
-"198
-[; ;main.c: 198:             return '6';
-[e ) -> -> 54 `ui `uc ]
-[e $UE 195  ]
-"199
-[; ;main.c: 199:         case 8:
-[e :U 225 ]
-"200
-[; ;main.c: 200:             return 'X';
-[e ) -> -> 88 `ui `uc ]
-[e $UE 195  ]
-"201
-[; ;main.c: 201:         case 9:
-[e :U 226 ]
-"202
-[; ;main.c: 202:             return '1';
+"132
+[; ;main.c: 132:         case 1:
+[e :U 201 ]
+"133
+[; ;main.c: 133:             return '1';
 [e ) -> -> 49 `ui `uc ]
-[e $UE 195  ]
-"203
-[; ;main.c: 203:         case 10:
-[e :U 227 ]
-"204
-[; ;main.c: 204:             return '2';
+[e $UE 178  ]
+"134
+[; ;main.c: 134:         case 2:
+[e :U 202 ]
+"135
+[; ;main.c: 135:             return '2';
 [e ) -> -> 50 `ui `uc ]
-[e $UE 195  ]
-"205
-[; ;main.c: 205:         case 11:
-[e :U 228 ]
-"206
-[; ;main.c: 206:             return '3';
+[e $UE 178  ]
+"136
+[; ;main.c: 136:         case 3:
+[e :U 203 ]
+"137
+[; ;main.c: 137:             return '3';
 [e ) -> -> 51 `ui `uc ]
-[e $UE 195  ]
-"207
-[; ;main.c: 207:         case 12:
-[e :U 229 ]
-"208
-[; ;main.c: 208:             return '-';
-[e ) -> -> 45 `ui `uc ]
-[e $UE 195  ]
-"209
-[; ;main.c: 209:         case 13:
-[e :U 230 ]
-"210
-[; ;main.c: 210:             return 0x0D;
-[e ) -> -> 13 `i `uc ]
-[e $UE 195  ]
-"211
-[; ;main.c: 211:         case 14:
-[e :U 231 ]
-"212
-[; ;main.c: 212:             return '0';
+[e $UE 178  ]
+"138
+[; ;main.c: 138:         case 4:
+[e :U 204 ]
+"139
+[; ;main.c: 139:             return 0x0A;
+[e ) -> -> 10 `i `uc ]
+[e $UE 178  ]
+"140
+[; ;main.c: 140:         case 5:
+[e :U 205 ]
+"141
+[; ;main.c: 141:             return '4';
+[e ) -> -> 52 `ui `uc ]
+[e $UE 178  ]
+"142
+[; ;main.c: 142:         case 6:
+[e :U 206 ]
+"143
+[; ;main.c: 143:             return '5';
+[e ) -> -> 53 `ui `uc ]
+[e $UE 178  ]
+"144
+[; ;main.c: 144:         case 7:
+[e :U 207 ]
+"145
+[; ;main.c: 145:             return '6';
+[e ) -> -> 54 `ui `uc ]
+[e $UE 178  ]
+"146
+[; ;main.c: 146:         case 8:
+[e :U 208 ]
+"147
+[; ;main.c: 147:             return 0x0B;
+[e ) -> -> 11 `i `uc ]
+[e $UE 178  ]
+"148
+[; ;main.c: 148:         case 9:
+[e :U 209 ]
+"149
+[; ;main.c: 149:             return '7';
+[e ) -> -> 55 `ui `uc ]
+[e $UE 178  ]
+"150
+[; ;main.c: 150:         case 10:
+[e :U 210 ]
+"151
+[; ;main.c: 151:             return '8';
+[e ) -> -> 56 `ui `uc ]
+[e $UE 178  ]
+"152
+[; ;main.c: 152:         case 11:
+[e :U 211 ]
+"153
+[; ;main.c: 153:             return '9';
+[e ) -> -> 57 `ui `uc ]
+[e $UE 178  ]
+"154
+[; ;main.c: 154:         case 12:
+[e :U 212 ]
+"155
+[; ;main.c: 155:             return 0x0C;
+[e ) -> -> 12 `i `uc ]
+[e $UE 178  ]
+"156
+[; ;main.c: 156:         case 13:
+[e :U 213 ]
+"157
+[; ;main.c: 157:             return 'n';
+[e ) -> -> 110 `ui `uc ]
+[e $UE 178  ]
+"158
+[; ;main.c: 158:         case 14:
+[e :U 214 ]
+"159
+[; ;main.c: 159:             return '0';
 [e ) -> -> 48 `ui `uc ]
-[e $UE 195  ]
-"213
-[; ;main.c: 213:         case 15:
-[e :U 232 ]
-"214
-[; ;main.c: 214:             return '=';
-[e ) -> -> 61 `ui `uc ]
-[e $UE 195  ]
-"215
-[; ;main.c: 215:         case 16:
-[e :U 233 ]
-"216
-[; ;main.c: 216:             return '+';
-[e ) -> -> 43 `ui `uc ]
-[e $UE 195  ]
-"217
-[; ;main.c: 217:         default:
-[e :U 234 ]
-"218
-[; ;main.c: 218:             break;
-[e $U 216  ]
-"220
-[; ;main.c: 220:     }
-}
-[e $U 216  ]
-[e :U 217 ]
-[e [\ -> _Tecla `i , $ -> 1 `i 218
- , $ -> 2 `i 219
- , $ -> 3 `i 220
- , $ -> 4 `i 221
- , $ -> 5 `i 222
- , $ -> 6 `i 223
- , $ -> 7 `i 224
- , $ -> 8 `i 225
- , $ -> 9 `i 226
- , $ -> 10 `i 227
- , $ -> 11 `i 228
- , $ -> 12 `i 229
- , $ -> 13 `i 230
- , $ -> 14 `i 231
- , $ -> 15 `i 232
- , $ -> 16 `i 233
- 234 ]
+[e $UE 178  ]
+"160
+[; ;main.c: 160:         case 15:
+[e :U 215 ]
+"161
+[; ;main.c: 161:             return 'f';
+[e ) -> -> 102 `ui `uc ]
+[e $UE 178  ]
+"162
+[; ;main.c: 162:         case 16:
 [e :U 216 ]
-"221
-[; ;main.c: 221:     return 0;
-[e ) -> -> 0 `i `uc ]
-[e $UE 195  ]
-"222
-[; ;main.c: 222: }
-[e :UE 195 ]
+"163
+[; ;main.c: 163:             return 0x0D;
+[e ) -> -> 13 `i `uc ]
+[e $UE 178  ]
+"164
+[; ;main.c: 164:         default:
+[e :U 217 ]
+"165
+[; ;main.c: 165:             break;
+[e $U 199  ]
+"167
+[; ;main.c: 167:     }
 }
+[e $U 199  ]
+[e :U 200 ]
+[e [\ -> _Tecla `i , $ -> 1 `i 201
+ , $ -> 2 `i 202
+ , $ -> 3 `i 203
+ , $ -> 4 `i 204
+ , $ -> 5 `i 205
+ , $ -> 6 `i 206
+ , $ -> 7 `i 207
+ , $ -> 8 `i 208
+ , $ -> 9 `i 209
+ , $ -> 10 `i 210
+ , $ -> 11 `i 211
+ , $ -> 12 `i 212
+ , $ -> 13 `i 213
+ , $ -> 14 `i 214
+ , $ -> 15 `i 215
+ , $ -> 16 `i 216
+ 217 ]
+[e :U 199 ]
+"168
+[; ;main.c: 168:     return 0;
+[e ) -> -> 0 `i `uc ]
+[e $UE 178  ]
+"169
+[; ;main.c: 169: }
+[e :UE 178 ]
+}
+"172
+[; ;main.c: 172: void RecibeHHMM() {
+[v _RecibeHHMM `(v ~T0 @X0 1 ef ]
+{
+[e :U _RecibeHHMM ]
+[f ]
+"173
+[; ;main.c: 173:     char Car, Datos[4];
+[v _Car `uc ~T0 @X0 1 a ]
+[v _Datos `uc ~T0 @X0 -> 4 `i a ]
+"174
+[; ;main.c: 174:     SEND_CMD(0x01);
+[e ( _SEND_CMD (1 -> -> 1 `i `uc ]
+"176
+[; ;main.c: 176:     SEND_MSJ(0x80, "Escriba la Hora:");
+[e ( _SEND_MSJ (2 , -> -> 128 `i `uc :s 1C ]
+"177
+[; ;main.c: 177:     SEND_MSJ(0x80, "HH/MM");
+[e ( _SEND_MSJ (2 , -> -> 128 `i `uc :s 2C ]
+"179
+[; ;main.c: 179:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"180
+[; ;main.c: 180:     Datos[3] = Car;
+[e = *U + &U _Datos * -> -> -> 3 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"181
+[; ;main.c: 181:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"182
+[; ;main.c: 182:     Datos[2] = Car;
+[e = *U + &U _Datos * -> -> -> 2 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"183
+[; ;main.c: 183:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"184
+[; ;main.c: 184:     Datos[1] = Car;
+[e = *U + &U _Datos * -> -> -> 1 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"185
+[; ;main.c: 185:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"186
+[; ;main.c: 186:     Datos[0] = Car;
+[e = *U + &U _Datos * -> -> -> 0 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"187
+[; ;main.c: 187:     SEND_CMD(0x80 + 20);
+[e ( _SEND_CMD (1 -> + -> 128 `i -> 20 `i `uc ]
+"188
+[; ;main.c: 188:     SEND_CHAR(Datos[3]);
+[e ( _SEND_CHAR (1 *U + &U _Datos * -> -> -> 3 `i `ui `ux -> -> # *U &U _Datos `ui `ux ]
+"189
+[; ;main.c: 189:     SEND_CHAR(Datos[2]);
+[e ( _SEND_CHAR (1 *U + &U _Datos * -> -> -> 2 `i `ui `ux -> -> # *U &U _Datos `ui `ux ]
+"190
+[; ;main.c: 190:     SEND_CHAR(':');
+[e ( _SEND_CHAR (1 -> -> 58 `ui `uc ]
+"191
+[; ;main.c: 191:     SEND_CHAR(Datos[1]);
+[e ( _SEND_CHAR (1 *U + &U _Datos * -> -> -> 1 `i `ui `ux -> -> # *U &U _Datos `ui `ux ]
+"192
+[; ;main.c: 192:     SEND_CHAR(Datos[0]);
+[e ( _SEND_CHAR (1 *U + &U _Datos * -> -> -> 0 `i `ui `ux -> -> # *U &U _Datos `ui `ux ]
+"195
+[; ;main.c: 195:     Write_Byte_To_DS1307_RTC(2, (Datos[3] << 4)+ (Datos[2]& 0x0F));
+[e ( _Write_Byte_To_DS1307_RTC (2 , -> -> 2 `i `uc -> + << -> *U + &U _Datos * -> -> -> 3 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 4 `i & -> *U + &U _Datos * -> -> -> 2 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 15 `i `uc ]
+"196
+[; ;main.c: 196:     Write_Byte_To_DS1307_RTC(1, (Datos[1] << 4)+ (Datos[0]& 0x0F));
+[e ( _Write_Byte_To_DS1307_RTC (2 , -> -> 1 `i `uc -> + << -> *U + &U _Datos * -> -> -> 1 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 4 `i & -> *U + &U _Datos * -> -> -> 0 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 15 `i `uc ]
+"197
+[; ;main.c: 197:     Write_Byte_To_DS1307_RTC(0, 0);
+[e ( _Write_Byte_To_DS1307_RTC (2 , -> -> 0 `i `uc -> -> 0 `i `uc ]
+"199
+[; ;main.c: 199: }
+[e :UE 218 ]
+}
+"201
+[; ;main.c: 201: char Deco_num(char dato) {
+[v _Deco_num `(uc ~T0 @X0 1 ef1`uc ]
+{
+[e :U _Deco_num ]
+[v _dato `uc ~T0 @X0 1 r1 ]
+[f ]
+"202
+[; ;main.c: 202:     switch (dato) {
+[e $U 221  ]
+{
+"203
+[; ;main.c: 203:         case 0:
+[e :U 222 ]
+"204
+[; ;main.c: 204:             return '0';
+[e ) -> -> 48 `ui `uc ]
+[e $UE 219  ]
+"205
+[; ;main.c: 205:         case 1:
+[e :U 223 ]
+"206
+[; ;main.c: 206:             return '1';
+[e ) -> -> 49 `ui `uc ]
+[e $UE 219  ]
+"207
+[; ;main.c: 207:         case 2:
+[e :U 224 ]
+"208
+[; ;main.c: 208:             return '2';
+[e ) -> -> 50 `ui `uc ]
+[e $UE 219  ]
+"209
+[; ;main.c: 209:         case 3:
+[e :U 225 ]
+"210
+[; ;main.c: 210:             return '3';
+[e ) -> -> 51 `ui `uc ]
+[e $UE 219  ]
+"211
+[; ;main.c: 211:         case 4:
+[e :U 226 ]
+"212
+[; ;main.c: 212:             return '4';
+[e ) -> -> 52 `ui `uc ]
+[e $UE 219  ]
+"213
+[; ;main.c: 213:         case 5:
+[e :U 227 ]
+"214
+[; ;main.c: 214:             return '5';
+[e ) -> -> 53 `ui `uc ]
+[e $UE 219  ]
+"215
+[; ;main.c: 215:         case 6:
+[e :U 228 ]
+"216
+[; ;main.c: 216:             return '6';
+[e ) -> -> 54 `ui `uc ]
+[e $UE 219  ]
+"217
+[; ;main.c: 217:         case 7:
+[e :U 229 ]
+"218
+[; ;main.c: 218:             return '7';
+[e ) -> -> 55 `ui `uc ]
+[e $UE 219  ]
+"219
+[; ;main.c: 219:         case 8:
+[e :U 230 ]
+"220
+[; ;main.c: 220:             return '8';
+[e ) -> -> 56 `ui `uc ]
+[e $UE 219  ]
+"221
+[; ;main.c: 221:         case 9:
+[e :U 231 ]
+"222
+[; ;main.c: 222:             return '9';
+[e ) -> -> 57 `ui `uc ]
+[e $UE 219  ]
+"223
+[; ;main.c: 223:         default:
+[e :U 232 ]
+"224
+[; ;main.c: 224:             return ' ';
+[e ) -> -> 32 `ui `uc ]
+[e $UE 219  ]
 "225
-[; ;main.c: 225: void LEA_FECHA()
-[v _LEA_FECHA `(v ~T0 @X0 1 ef ]
+[; ;main.c: 225:     }
+}
+[e $U 220  ]
+[e :U 221 ]
+[e [\ -> _dato `i , $ -> 0 `i 222
+ , $ -> 1 `i 223
+ , $ -> 2 `i 224
+ , $ -> 3 `i 225
+ , $ -> 4 `i 226
+ , $ -> 5 `i 227
+ , $ -> 6 `i 228
+ , $ -> 7 `i 229
+ , $ -> 8 `i 230
+ , $ -> 9 `i 231
+ 232 ]
+[e :U 220 ]
 "226
-[; ;main.c: 226: {
+[; ;main.c: 226: }
+[e :UE 219 ]
+}
+"227
+[; ;main.c: 227: void deco_mes(char addr,char Car) {
+[v _deco_mes `(v ~T0 @X0 1 ef2`uc`uc ]
+{
+[e :U _deco_mes ]
+[v _addr `uc ~T0 @X0 1 r1 ]
+[v _Car `uc ~T0 @X0 1 r2 ]
+[f ]
+"228
+[; ;main.c: 228:     switch (Car) {
+[e $U 235  ]
+{
+"229
+[; ;main.c: 229:         case 1:
+[e :U 236 ]
+"230
+[; ;main.c: 230:             SEND_MSJ(addr, "ENE");
+[e ( _SEND_MSJ (2 , _addr :s 3C ]
+"231
+[; ;main.c: 231:             break;
+[e $U 234  ]
+"232
+[; ;main.c: 232:         case 2:
+[e :U 237 ]
+"233
+[; ;main.c: 233:             SEND_MSJ(addr, "FEB");
+[e ( _SEND_MSJ (2 , _addr :s 4C ]
+"234
+[; ;main.c: 234:             break;
+[e $U 234  ]
+"235
+[; ;main.c: 235:         case 3:
+[e :U 238 ]
+"236
+[; ;main.c: 236:             SEND_MSJ(addr, "MAR");
+[e ( _SEND_MSJ (2 , _addr :s 5C ]
+"237
+[; ;main.c: 237:             break;
+[e $U 234  ]
+"238
+[; ;main.c: 238:         case 4:
+[e :U 239 ]
+"239
+[; ;main.c: 239:             SEND_MSJ(addr, "ABR");
+[e ( _SEND_MSJ (2 , _addr :s 6C ]
+"240
+[; ;main.c: 240:             break;
+[e $U 234  ]
+"241
+[; ;main.c: 241:         case 5:
+[e :U 240 ]
+"242
+[; ;main.c: 242:             SEND_MSJ(addr, "MAY");
+[e ( _SEND_MSJ (2 , _addr :s 7C ]
+"243
+[; ;main.c: 243:             break;
+[e $U 234  ]
+"244
+[; ;main.c: 244:         case 6:
+[e :U 241 ]
+"245
+[; ;main.c: 245:             SEND_MSJ(addr, "JUN");
+[e ( _SEND_MSJ (2 , _addr :s 8C ]
+"246
+[; ;main.c: 246:             break;
+[e $U 234  ]
+"247
+[; ;main.c: 247:         case 7:
+[e :U 242 ]
+"248
+[; ;main.c: 248:             SEND_MSJ(addr, "JUL");
+[e ( _SEND_MSJ (2 , _addr :s 9C ]
+"249
+[; ;main.c: 249:             break;
+[e $U 234  ]
+"250
+[; ;main.c: 250:         case 8:
+[e :U 243 ]
+"251
+[; ;main.c: 251:             SEND_MSJ(addr, "AGO");
+[e ( _SEND_MSJ (2 , _addr :s 10C ]
+"252
+[; ;main.c: 252:             break;
+[e $U 234  ]
+"253
+[; ;main.c: 253:         case 9:
+[e :U 244 ]
+"254
+[; ;main.c: 254:             SEND_MSJ(addr, "SEP");
+[e ( _SEND_MSJ (2 , _addr :s 11C ]
+"255
+[; ;main.c: 255:             break;
+[e $U 234  ]
+"256
+[; ;main.c: 256:         case 0x10:
+[e :U 245 ]
+"257
+[; ;main.c: 257:             SEND_MSJ(addr, "OCT");
+[e ( _SEND_MSJ (2 , _addr :s 12C ]
+"258
+[; ;main.c: 258:             break;
+[e $U 234  ]
+"259
+[; ;main.c: 259:         case 0x11:
+[e :U 246 ]
+"260
+[; ;main.c: 260:             SEND_MSJ(addr, "NOV");
+[e ( _SEND_MSJ (2 , _addr :s 13C ]
+"261
+[; ;main.c: 261:             break;
+[e $U 234  ]
+"262
+[; ;main.c: 262:         case 0x12:
+[e :U 247 ]
+"263
+[; ;main.c: 263:             SEND_MSJ(addr, "DIC");
+[e ( _SEND_MSJ (2 , _addr :s 14C ]
+"264
+[; ;main.c: 264:             break;
+[e $U 234  ]
+"265
+[; ;main.c: 265:         default:
+[e :U 248 ]
+"266
+[; ;main.c: 266:             SEND_CHAR(((Car >> 4) & 0x0F) + 0x30);
+[e ( _SEND_CHAR (1 -> + & >> -> _Car `i -> 4 `i -> 15 `i -> 48 `i `uc ]
+"267
+[; ;main.c: 267:             SEND_CHAR((Car & 0x0F) + 0x30);
+[e ( _SEND_CHAR (1 -> + & -> _Car `i -> 15 `i -> 48 `i `uc ]
+"268
+[; ;main.c: 268:             break;
+[e $U 234  ]
+"270
+[; ;main.c: 270:     }
+}
+[e $U 234  ]
+[e :U 235 ]
+[e [\ -> _Car `i , $ -> 1 `i 236
+ , $ -> 2 `i 237
+ , $ -> 3 `i 238
+ , $ -> 4 `i 239
+ , $ -> 5 `i 240
+ , $ -> 6 `i 241
+ , $ -> 7 `i 242
+ , $ -> 8 `i 243
+ , $ -> 9 `i 244
+ , $ -> 16 `i 245
+ , $ -> 17 `i 246
+ , $ -> 18 `i 247
+ 248 ]
+[e :U 234 ]
+"271
+[; ;main.c: 271: }
+[e :UE 233 ]
+}
+"274
+[; ;main.c: 274: void ESCRIBA_SEE(char addr, char dato) {
+[v _ESCRIBA_SEE `(v ~T0 @X0 1 ef2`uc`uc ]
+{
+[e :U _ESCRIBA_SEE ]
+[v _addr `uc ~T0 @X0 1 r1 ]
+[v _dato `uc ~T0 @X0 1 r2 ]
+[f ]
+"276
+[; ;main.c: 276:     I2C_Start();
+[e ( _I2C_Start ..  ]
+"279
+[; ;main.c: 279:     while (I2C_Write_Byte(0xA0 + 0) == 1) {
+[e $U 250  ]
+[e :U 251 ]
+{
+"280
+[; ;main.c: 280:         I2C_Start();
+[e ( _I2C_Start ..  ]
+"281
+[; ;main.c: 281:     }
+}
+[e :U 250 ]
+"279
+[; ;main.c: 279:     while (I2C_Write_Byte(0xA0 + 0) == 1) {
+[e $ == -> ( _I2C_Write_Byte (1 -> + -> 160 `i -> 0 `i `uc `i -> 1 `i 251  ]
+[e :U 252 ]
+"283
+[; ;main.c: 283:     I2C_Write_Byte(0);
+[e ( _I2C_Write_Byte (1 -> -> 0 `i `uc ]
+"284
+[; ;main.c: 284:     I2C_Write_Byte(addr);
+[e ( _I2C_Write_Byte (1 -> _addr `uc ]
+"285
+[; ;main.c: 285:     I2C_Write_Byte(dato);
+[e ( _I2C_Write_Byte (1 -> _dato `uc ]
+"286
+[; ;main.c: 286:     I2C_Stop();
+[e ( _I2C_Stop ..  ]
+"287
+[; ;main.c: 287: }
+[e :UE 249 ]
+}
+"291
+[; ;main.c: 291: void RecibeALARMAS(char addr) {
+[v _RecibeALARMAS `(v ~T0 @X0 1 ef1`uc ]
+{
+[e :U _RecibeALARMAS ]
+[v _addr `uc ~T0 @X0 1 r1 ]
+[f ]
+"292
+[; ;main.c: 292:     char Car, Datos[10], aux1, aux2,ctr;
+[v _Car `uc ~T0 @X0 1 a ]
+[v _Datos `uc ~T0 @X0 -> 10 `i a ]
+[v _aux1 `uc ~T0 @X0 1 a ]
+[v _aux2 `uc ~T0 @X0 1 a ]
+[v _ctr `uc ~T0 @X0 1 a ]
+"293
+[; ;main.c: 293:     SEND_CMD(0x01);
+[e ( _SEND_CMD (1 -> -> 1 `i `uc ]
+"295
+[; ;main.c: 295:     SEND_MSJ(0x80, "Escriba alarma ");
+[e ( _SEND_MSJ (2 , -> -> 128 `i `uc :s 15C ]
+"296
+[; ;main.c: 296:     aux1 = addr / 10;
+[e = _aux1 -> / -> _addr `i -> 10 `i `uc ]
+"297
+[; ;main.c: 297:     aux2 = aux1 * 10 - addr;
+[e = _aux2 -> - * -> _aux1 `i -> 10 `i -> _addr `i `uc ]
+"298
+[; ;main.c: 298:     SEND_CHAR(Deco_num(aux1));
+[e ( _SEND_CHAR (1 ( _Deco_num (1 _aux1 ]
+"299
+[; ;main.c: 299:     SEND_CHAR(Deco_num(aux2));
+[e ( _SEND_CHAR (1 ( _Deco_num (1 _aux2 ]
+"300
+[; ;main.c: 300:     SEND_MSJ(0xC0, "AA/MM/DD HH:MM");
+[e ( _SEND_MSJ (2 , -> -> 192 `i `uc :s 16C ]
+"301
+[; ;main.c: 301:     SEND_MSJ(0x80+20, "*=on #=off ");
+[e ( _SEND_MSJ (2 , -> + -> 128 `i -> 20 `i `uc :s 17C ]
+"302
+[; ;main.c: 302:     SEND_CHAR('a');
+[e ( _SEND_CHAR (1 -> -> 97 `ui `uc ]
+"303
+[; ;main.c: 303:     _delay((unsigned long)((2000)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 2000 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"304
+[; ;main.c: 304:     SEND_CMD(1);
+[e ( _SEND_CMD (1 -> -> 1 `i `uc ]
+"306
+[; ;main.c: 306:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"307
+[; ;main.c: 307:     while (Car == 0){
+[e $U 254  ]
+[e :U 255 ]
+{
+"308
+[; ;main.c: 308:         Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"309
+[; ;main.c: 309:         _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"310
+[; ;main.c: 310:     }
+}
+[e :U 254 ]
+"307
+[; ;main.c: 307:     while (Car == 0){
+[e $ == -> _Car `i -> 0 `i 255  ]
+[e :U 256 ]
+"311
+[; ;main.c: 311:     Datos[9] = Car;
+[e = *U + &U _Datos * -> -> -> 9 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"312
+[; ;main.c: 312:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"313
+[; ;main.c: 313:     while (Car == 0){
+[e $U 257  ]
+[e :U 258 ]
+{
+"314
+[; ;main.c: 314:         Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"315
+[; ;main.c: 315:         _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"316
+[; ;main.c: 316:     }
+}
+[e :U 257 ]
+"313
+[; ;main.c: 313:     while (Car == 0){
+[e $ == -> _Car `i -> 0 `i 258  ]
+[e :U 259 ]
+"317
+[; ;main.c: 317:     Datos[8] = Car;
+[e = *U + &U _Datos * -> -> -> 8 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"319
+[; ;main.c: 319:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"320
+[; ;main.c: 320:     while (Car == 0){
+[e $U 260  ]
+[e :U 261 ]
+{
+"321
+[; ;main.c: 321:         Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"322
+[; ;main.c: 322:         _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"323
+[; ;main.c: 323:     }
+}
+[e :U 260 ]
+"320
+[; ;main.c: 320:     while (Car == 0){
+[e $ == -> _Car `i -> 0 `i 261  ]
+[e :U 262 ]
+"324
+[; ;main.c: 324:     Datos[7] = Car;
+[e = *U + &U _Datos * -> -> -> 7 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"325
+[; ;main.c: 325:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"326
+[; ;main.c: 326:     while (Car == 0){
+[e $U 263  ]
+[e :U 264 ]
+{
+"327
+[; ;main.c: 327:         Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"328
+[; ;main.c: 328:         _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"329
+[; ;main.c: 329:     }
+}
+[e :U 263 ]
+"326
+[; ;main.c: 326:     while (Car == 0){
+[e $ == -> _Car `i -> 0 `i 264  ]
+[e :U 265 ]
+"330
+[; ;main.c: 330:     Datos[6] = Car;
+[e = *U + &U _Datos * -> -> -> 6 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"332
+[; ;main.c: 332:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"333
+[; ;main.c: 333:     while (Car == 0){
+[e $U 266  ]
+[e :U 267 ]
+{
+"334
+[; ;main.c: 334:         Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"335
+[; ;main.c: 335:         _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"336
+[; ;main.c: 336:     }
+}
+[e :U 266 ]
+"333
+[; ;main.c: 333:     while (Car == 0){
+[e $ == -> _Car `i -> 0 `i 267  ]
+[e :U 268 ]
+"337
+[; ;main.c: 337:     Datos[5] = Car;
+[e = *U + &U _Datos * -> -> -> 5 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"338
+[; ;main.c: 338:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"339
+[; ;main.c: 339:     while (Car == 0){
+[e $U 269  ]
+[e :U 270 ]
+{
+"340
+[; ;main.c: 340:         Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"341
+[; ;main.c: 341:         _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"342
+[; ;main.c: 342:     }
+}
+[e :U 269 ]
+"339
+[; ;main.c: 339:     while (Car == 0){
+[e $ == -> _Car `i -> 0 `i 270  ]
+[e :U 271 ]
+"343
+[; ;main.c: 343:     Datos[4] = Car;
+[e = *U + &U _Datos * -> -> -> 4 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"345
+[; ;main.c: 345:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"346
+[; ;main.c: 346:     while (Car == 0){
+[e $U 272  ]
+[e :U 273 ]
+{
+"347
+[; ;main.c: 347:         Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"348
+[; ;main.c: 348:         _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"349
+[; ;main.c: 349:     }
+}
+[e :U 272 ]
+"346
+[; ;main.c: 346:     while (Car == 0){
+[e $ == -> _Car `i -> 0 `i 273  ]
+[e :U 274 ]
+"350
+[; ;main.c: 350:     Datos[3] = Car;
+[e = *U + &U _Datos * -> -> -> 3 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"351
+[; ;main.c: 351:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"352
+[; ;main.c: 352:     while (Car == 0){
+[e $U 275  ]
+[e :U 276 ]
+{
+"353
+[; ;main.c: 353:         Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"354
+[; ;main.c: 354:         _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"355
+[; ;main.c: 355:     }
+}
+[e :U 275 ]
+"352
+[; ;main.c: 352:     while (Car == 0){
+[e $ == -> _Car `i -> 0 `i 276  ]
+[e :U 277 ]
+"356
+[; ;main.c: 356:     Datos[2] = Car;
+[e = *U + &U _Datos * -> -> -> 2 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"358
+[; ;main.c: 358:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"359
+[; ;main.c: 359:     while (Car == 0){
+[e $U 278  ]
+[e :U 279 ]
+{
+"360
+[; ;main.c: 360:         Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"361
+[; ;main.c: 361:         _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"362
+[; ;main.c: 362:     }
+}
+[e :U 278 ]
+"359
+[; ;main.c: 359:     while (Car == 0){
+[e $ == -> _Car `i -> 0 `i 279  ]
+[e :U 280 ]
+"363
+[; ;main.c: 363:     Datos[1] = Car;
+[e = *U + &U _Datos * -> -> -> 1 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"364
+[; ;main.c: 364:     Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"365
+[; ;main.c: 365:     while (Car == 0){
+[e $U 281  ]
+[e :U 282 ]
+{
+"366
+[; ;main.c: 366:         Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"367
+[; ;main.c: 367:         _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"368
+[; ;main.c: 368:     }
+}
+[e :U 281 ]
+"365
+[; ;main.c: 365:     while (Car == 0){
+[e $ == -> _Car `i -> 0 `i 282  ]
+[e :U 283 ]
+"369
+[; ;main.c: 369:     Datos[0] = Car;
+[e = *U + &U _Datos * -> -> -> 0 `i `ui `ux -> -> # *U &U _Datos `ui `ux _Car ]
+"371
+[; ;main.c: 371:     Car=TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"372
+[; ;main.c: 372:     while (Car == 0){
+[e $U 284  ]
+[e :U 285 ]
+{
+"373
+[; ;main.c: 373:         Car = TECLADO();
+[e = _Car ( _TECLADO ..  ]
+"374
+[; ;main.c: 374:         _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"375
+[; ;main.c: 375:     }
+}
+[e :U 284 ]
+"372
+[; ;main.c: 372:     while (Car == 0){
+[e $ == -> _Car `i -> 0 `i 285  ]
+[e :U 286 ]
+"377
+[; ;main.c: 377:     if (Car == 'n'){
+[e $ ! == -> _Car `ui -> 110 `ui 287  ]
+{
+"378
+[; ;main.c: 378:         ctr = 1;
+[e = _ctr -> -> 1 `i `uc ]
+"379
+[; ;main.c: 379:     }
+}
+[e $U 288  ]
+"380
+[; ;main.c: 380:     else{
+[e :U 287 ]
+{
+"381
+[; ;main.c: 381:         ctr = 0;
+[e = _ctr -> -> 0 `i `uc ]
+"382
+[; ;main.c: 382:     }
+}
+[e :U 288 ]
+"395
+[; ;main.c: 395:     SEND_CMD(0x80);
+[e ( _SEND_CMD (1 -> -> 128 `i `uc ]
+"397
+[; ;main.c: 397:     SEND_CHAR(Datos[3]);
+[e ( _SEND_CHAR (1 *U + &U _Datos * -> -> -> 3 `i `ui `ux -> -> # *U &U _Datos `ui `ux ]
+"398
+[; ;main.c: 398:     SEND_CHAR(Datos[2]);
+[e ( _SEND_CHAR (1 *U + &U _Datos * -> -> -> 2 `i `ui `ux -> -> # *U &U _Datos `ui `ux ]
+"399
+[; ;main.c: 399:     SEND_CHAR(':');
+[e ( _SEND_CHAR (1 -> -> 58 `ui `uc ]
+"401
+[; ;main.c: 401:     SEND_CHAR(Datos[1]);
+[e ( _SEND_CHAR (1 *U + &U _Datos * -> -> -> 1 `i `ui `ux -> -> # *U &U _Datos `ui `ux ]
+"402
+[; ;main.c: 402:     SEND_CHAR(Datos[0]);
+[e ( _SEND_CHAR (1 *U + &U _Datos * -> -> -> 0 `i `ui `ux -> -> # *U &U _Datos `ui `ux ]
+"404
+[; ;main.c: 404:     if (ctr==1){
+[e $ ! == -> _ctr `i -> 1 `i 289  ]
+{
+"405
+[; ;main.c: 405:         SEND_MSJ(0x80+15,"On");
+[e ( _SEND_MSJ (2 , -> + -> 128 `i -> 15 `i `uc :s 18C ]
+"406
+[; ;main.c: 406:     }else {
+}
+[e $U 290  ]
+[e :U 289 ]
+{
+"407
+[; ;main.c: 407:         SEND_MSJ(0x80+15,"Off");
+[e ( _SEND_MSJ (2 , -> + -> 128 `i -> 15 `i `uc :s 19C ]
+"408
+[; ;main.c: 408:     }
+}
+[e :U 290 ]
+"410
+[; ;main.c: 410:     SEND_CMD(0xC0);
+[e ( _SEND_CMD (1 -> -> 192 `i `uc ]
+"411
+[; ;main.c: 411:     SEND_CHAR(Datos[5]);
+[e ( _SEND_CHAR (1 *U + &U _Datos * -> -> -> 5 `i `ui `ux -> -> # *U &U _Datos `ui `ux ]
+"412
+[; ;main.c: 412:     SEND_CHAR(Datos[4]);
+[e ( _SEND_CHAR (1 *U + &U _Datos * -> -> -> 4 `i `ui `ux -> -> # *U &U _Datos `ui `ux ]
+"413
+[; ;main.c: 413:     SEND_CHAR('/');
+[e ( _SEND_CHAR (1 -> -> 47 `ui `uc ]
+"415
+[; ;main.c: 415:     deco_mes(0xC0 + 2, ((Datos[7] << 4)+ (Datos[6]& 0x0F)));
+[e ( _deco_mes (2 , -> + -> 192 `i -> 2 `i `uc -> + << -> *U + &U _Datos * -> -> -> 7 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 4 `i & -> *U + &U _Datos * -> -> -> 6 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 15 `i `uc ]
+"416
+[; ;main.c: 416:     SEND_CHAR('/');
+[e ( _SEND_CHAR (1 -> -> 47 `ui `uc ]
+"418
+[; ;main.c: 418:     SEND_CHAR(Datos[9]);
+[e ( _SEND_CHAR (1 *U + &U _Datos * -> -> -> 9 `i `ui `ux -> -> # *U &U _Datos `ui `ux ]
+"419
+[; ;main.c: 419:     SEND_CHAR(Datos[8]);
+[e ( _SEND_CHAR (1 *U + &U _Datos * -> -> -> 8 `i `ui `ux -> -> # *U &U _Datos `ui `ux ]
+"421
+[; ;main.c: 421:     ESCRIBA_SEE(addr++, (Datos[3] << 4)+ (Datos[2]& 0x0F));
+[e ( _ESCRIBA_SEE (2 , ++ _addr -> -> 1 `i `uc -> + << -> *U + &U _Datos * -> -> -> 3 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 4 `i & -> *U + &U _Datos * -> -> -> 2 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 15 `i `uc ]
+"422
+[; ;main.c: 422:     _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"423
+[; ;main.c: 423:     ESCRIBA_SEE(addr++, (Datos[1] << 4)+ (Datos[0]& 0x0F));
+[e ( _ESCRIBA_SEE (2 , ++ _addr -> -> 1 `i `uc -> + << -> *U + &U _Datos * -> -> -> 1 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 4 `i & -> *U + &U _Datos * -> -> -> 0 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 15 `i `uc ]
+"424
+[; ;main.c: 424:     _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"425
+[; ;main.c: 425:     ESCRIBA_SEE(addr++, (Datos[5] << 4)+ (Datos[4]& 0x0F));
+[e ( _ESCRIBA_SEE (2 , ++ _addr -> -> 1 `i `uc -> + << -> *U + &U _Datos * -> -> -> 5 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 4 `i & -> *U + &U _Datos * -> -> -> 4 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 15 `i `uc ]
+"426
+[; ;main.c: 426:     _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"427
+[; ;main.c: 427:     ESCRIBA_SEE(addr++, (Datos[7] << 4)+ (Datos[6]& 0x0F));
+[e ( _ESCRIBA_SEE (2 , ++ _addr -> -> 1 `i `uc -> + << -> *U + &U _Datos * -> -> -> 7 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 4 `i & -> *U + &U _Datos * -> -> -> 6 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 15 `i `uc ]
+"428
+[; ;main.c: 428:     _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"429
+[; ;main.c: 429:     ESCRIBA_SEE(addr++, (Datos[9] << 4)+ (Datos[8]& 0x0F));
+[e ( _ESCRIBA_SEE (2 , ++ _addr -> -> 1 `i `uc -> + << -> *U + &U _Datos * -> -> -> 9 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 4 `i & -> *U + &U _Datos * -> -> -> 8 `i `ui `ux -> -> # *U &U _Datos `ui `ux `i -> 15 `i `uc ]
+"430
+[; ;main.c: 430:     _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"431
+[; ;main.c: 431:     ESCRIBA_SEE(addr++, ctr);
+[e ( _ESCRIBA_SEE (2 , ++ _addr -> -> 1 `i `uc _ctr ]
+"432
+[; ;main.c: 432:     _delay((unsigned long)((10)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"433
+[; ;main.c: 433:     return;
+[e $UE 253  ]
+"434
+[; ;main.c: 434: }
+[e :UE 253 ]
+}
+"437
+[; ;main.c: 437: void LEA_FECHA() {
+[v _LEA_FECHA `(v ~T0 @X0 1 ef ]
 {
 [e :U _LEA_FECHA ]
 [f ]
-"227
-[; ;main.c: 227:     char fecha[6];
+"438
+[; ;main.c: 438:     char fecha[6];
 [v _fecha `uc ~T0 @X0 -> 6 `i a ]
-"229
-[; ;main.c: 229:     SEND_CMD(0x01);
+"440
+[; ;main.c: 440:     SEND_CMD(0x01);
 [e ( _SEND_CMD (1 -> -> 1 `i `uc ]
-"231
-[; ;main.c: 231:     EscribeCadenaLCD("Teclee día (DD):");
-[e ( _EscribeCadenaLCD (1 :s 3C ]
-"232
-[; ;main.c: 232:     char car=0;
+"442
+[; ;main.c: 442:     SEND_MSJ(0x80, "Teclee día (DD):");
+[e ( _SEND_MSJ (2 , -> -> 128 `i `uc :s 20C ]
+"443
+[; ;main.c: 443:     char car = 0;
 [v _car `uc ~T0 @X0 1 a ]
 [e = _car -> -> 0 `i `uc ]
-"233
-[; ;main.c: 233:     while (car == 0){
-[e $U 236  ]
-[e :U 237 ]
+"444
+[; ;main.c: 444:     while (car == 0) {
+[e $U 292  ]
+[e :U 293 ]
 {
-"234
-[; ;main.c: 234:         car = TECLADO();
+"445
+[; ;main.c: 445:         car = TECLADO();
 [e = _car ( _TECLADO ..  ]
-"235
-[; ;main.c: 235:         _delay((unsigned long)((10)*(4000000/4000.0)));
+"446
+[; ;main.c: 446:         _delay((unsigned long)((10)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"236
-[; ;main.c: 236:     }
+"447
+[; ;main.c: 447:     }
 }
-[e :U 236 ]
-"233
-[; ;main.c: 233:     while (car == 0){
-[e $ == -> _car `i -> 0 `i 237  ]
-[e :U 238 ]
-"237
-[; ;main.c: 237:     SEND_CHAR(car);
+[e :U 292 ]
+"444
+[; ;main.c: 444:     while (car == 0) {
+[e $ == -> _car `i -> 0 `i 293  ]
+[e :U 294 ]
+"448
+[; ;main.c: 448:     SEND_CHAR(car);
 [e ( _SEND_CHAR (1 _car ]
-"238
-[; ;main.c: 238:     fecha[0] = car;
+"449
+[; ;main.c: 449:     fecha[0] = car;
 [e = *U + &U _fecha * -> -> -> 0 `i `ui `ux -> -> # *U &U _fecha `ui `ux _car ]
-"240
-[; ;main.c: 240:     car = 0;
+"451
+[; ;main.c: 451:     car = 0;
 [e = _car -> -> 0 `i `uc ]
-"241
-[; ;main.c: 241:     while (car == 0){
-[e $U 239  ]
-[e :U 240 ]
+"452
+[; ;main.c: 452:     while (car == 0) {
+[e $U 295  ]
+[e :U 296 ]
 {
-"242
-[; ;main.c: 242:         car = TECLADO();
+"453
+[; ;main.c: 453:         car = TECLADO();
 [e = _car ( _TECLADO ..  ]
-"243
-[; ;main.c: 243:         _delay((unsigned long)((10)*(4000000/4000.0)));
+"454
+[; ;main.c: 454:         _delay((unsigned long)((10)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"244
-[; ;main.c: 244:     }
+"455
+[; ;main.c: 455:     }
 }
-[e :U 239 ]
-"241
-[; ;main.c: 241:     while (car == 0){
-[e $ == -> _car `i -> 0 `i 240  ]
-[e :U 241 ]
-"245
-[; ;main.c: 245:     SEND_CHAR(car);
+[e :U 295 ]
+"452
+[; ;main.c: 452:     while (car == 0) {
+[e $ == -> _car `i -> 0 `i 296  ]
+[e :U 297 ]
+"456
+[; ;main.c: 456:     SEND_CHAR(car);
 [e ( _SEND_CHAR (1 _car ]
-"246
-[; ;main.c: 246:     fecha[1] = car;
+"457
+[; ;main.c: 457:     fecha[1] = car;
 [e = *U + &U _fecha * -> -> -> 1 `i `ui `ux -> -> # *U &U _fecha `ui `ux _car ]
-"248
-[; ;main.c: 248:     _delay((unsigned long)((200)*(4000000/4000.0)));
+"459
+[; ;main.c: 459:     _delay((unsigned long)((200)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 200 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"251
-[; ;main.c: 251:     SEND_CMD(0x01);
+"462
+[; ;main.c: 462:     SEND_CMD(0x01);
 [e ( _SEND_CMD (1 -> -> 1 `i `uc ]
-"253
-[; ;main.c: 253:     EscribeCadenaLCD("Teclee mes (MM):");
-[e ( _EscribeCadenaLCD (1 :s 4C ]
-"256
-[; ;main.c: 256:     car = 0;
+"464
+[; ;main.c: 464:     SEND_MSJ(0x80, "Teclee mes (MM):");
+[e ( _SEND_MSJ (2 , -> -> 128 `i `uc :s 21C ]
+"467
+[; ;main.c: 467:     car = 0;
 [e = _car -> -> 0 `i `uc ]
-"257
-[; ;main.c: 257:     while (car == 0){
-[e $U 242  ]
-[e :U 243 ]
+"468
+[; ;main.c: 468:     while (car == 0) {
+[e $U 298  ]
+[e :U 299 ]
 {
-"258
-[; ;main.c: 258:         car = TECLADO();
+"469
+[; ;main.c: 469:         car = TECLADO();
 [e = _car ( _TECLADO ..  ]
-"259
-[; ;main.c: 259:         _delay((unsigned long)((10)*(4000000/4000.0)));
+"470
+[; ;main.c: 470:         _delay((unsigned long)((10)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"261
-[; ;main.c: 261:     }
+"472
+[; ;main.c: 472:     }
 }
-[e :U 242 ]
-"257
-[; ;main.c: 257:     while (car == 0){
-[e $ == -> _car `i -> 0 `i 243  ]
-[e :U 244 ]
-"262
-[; ;main.c: 262:     SEND_CHAR(car);
+[e :U 298 ]
+"468
+[; ;main.c: 468:     while (car == 0) {
+[e $ == -> _car `i -> 0 `i 299  ]
+[e :U 300 ]
+"473
+[; ;main.c: 473:     SEND_CHAR(car);
 [e ( _SEND_CHAR (1 _car ]
-"263
-[; ;main.c: 263:     fecha[3] = car;
+"474
+[; ;main.c: 474:     fecha[3] = car;
 [e = *U + &U _fecha * -> -> -> 3 `i `ui `ux -> -> # *U &U _fecha `ui `ux _car ]
-"264
-[; ;main.c: 264:     _delay((unsigned long)((200)*(4000000/4000.0)));
+"475
+[; ;main.c: 475:     _delay((unsigned long)((200)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 200 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"267
-[; ;main.c: 267:     SEND_CMD(0x01);
+"478
+[; ;main.c: 478:     SEND_CMD(0x01);
 [e ( _SEND_CMD (1 -> -> 1 `i `uc ]
-"269
-[; ;main.c: 269:     EscribeCadenaLCD("Teclee año (AA):");
-[e ( _EscribeCadenaLCD (1 :s 5C ]
-"270
-[; ;main.c: 270:     car = 0;
+"480
+[; ;main.c: 480:     SEND_MSJ(0x80,"Teclee año (AA):");
+[e ( _SEND_MSJ (2 , -> -> 128 `i `uc :s 22C ]
+"481
+[; ;main.c: 481:     car = 0;
 [e = _car -> -> 0 `i `uc ]
-"271
-[; ;main.c: 271:     while (car == 0){
-[e $U 245  ]
-[e :U 246 ]
+"482
+[; ;main.c: 482:     while (car == 0) {
+[e $U 301  ]
+[e :U 302 ]
 {
-"272
-[; ;main.c: 272:         car = TECLADO();
+"483
+[; ;main.c: 483:         car = TECLADO();
 [e = _car ( _TECLADO ..  ]
-"273
-[; ;main.c: 273:         _delay((unsigned long)((10)*(4000000/4000.0)));
+"484
+[; ;main.c: 484:         _delay((unsigned long)((10)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"275
-[; ;main.c: 275:     }
+"486
+[; ;main.c: 486:     }
 }
-[e :U 245 ]
-"271
-[; ;main.c: 271:     while (car == 0){
-[e $ == -> _car `i -> 0 `i 246  ]
-[e :U 247 ]
-"277
-[; ;main.c: 277:     SEND_CHAR(car);
+[e :U 301 ]
+"482
+[; ;main.c: 482:     while (car == 0) {
+[e $ == -> _car `i -> 0 `i 302  ]
+[e :U 303 ]
+"488
+[; ;main.c: 488:     SEND_CHAR(car);
 [e ( _SEND_CHAR (1 _car ]
-"278
-[; ;main.c: 278:     fecha[4] = car;
+"489
+[; ;main.c: 489:     fecha[4] = car;
 [e = *U + &U _fecha * -> -> -> 4 `i `ui `ux -> -> # *U &U _fecha `ui `ux _car ]
-"280
-[; ;main.c: 280:     car = 0;
+"491
+[; ;main.c: 491:     car = 0;
 [e = _car -> -> 0 `i `uc ]
-"281
-[; ;main.c: 281:     while (car == 0){
-[e $U 248  ]
-[e :U 249 ]
+"492
+[; ;main.c: 492:     while (car == 0) {
+[e $U 304  ]
+[e :U 305 ]
 {
-"282
-[; ;main.c: 282:         car = TECLADO();
+"493
+[; ;main.c: 493:         car = TECLADO();
 [e = _car ( _TECLADO ..  ]
-"283
-[; ;main.c: 283:         _delay((unsigned long)((10)*(4000000/4000.0)));
+"494
+[; ;main.c: 494:         _delay((unsigned long)((10)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"284
-[; ;main.c: 284:     }
+"495
+[; ;main.c: 495:     }
 }
-[e :U 248 ]
-"281
-[; ;main.c: 281:     while (car == 0){
-[e $ == -> _car `i -> 0 `i 249  ]
-[e :U 250 ]
-"286
-[; ;main.c: 286:     SEND_CHAR(car);
+[e :U 304 ]
+"492
+[; ;main.c: 492:     while (car == 0) {
+[e $ == -> _car `i -> 0 `i 305  ]
+[e :U 306 ]
+"497
+[; ;main.c: 497:     SEND_CHAR(car);
 [e ( _SEND_CHAR (1 _car ]
-"287
-[; ;main.c: 287:     fecha[5] = car;
+"498
+[; ;main.c: 498:     fecha[5] = car;
 [e = *U + &U _fecha * -> -> -> 5 `i `ui `ux -> -> # *U &U _fecha `ui `ux _car ]
-"288
-[; ;main.c: 288:     _delay((unsigned long)((200)*(4000000/4000.0)));
+"499
+[; ;main.c: 499:     _delay((unsigned long)((200)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 200 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"290
-[; ;main.c: 290:     SEND_CMD(1);
+"501
+[; ;main.c: 501:     SEND_CMD(1);
 [e ( _SEND_CMD (1 -> -> 1 `i `uc ]
-"292
-[; ;main.c: 292:     char DIA = (fecha[0]<<4) + (fecha[1]&0x0F);
+"503
+[; ;main.c: 503:     char DIA = (fecha[0] << 4) + (fecha[1]&0x0F);
 [v _DIA `uc ~T0 @X0 1 a ]
 [e = _DIA -> + << -> *U + &U _fecha * -> -> -> 0 `i `ui `ux -> -> # *U &U _fecha `ui `ux `i -> 4 `i & -> *U + &U _fecha * -> -> -> 1 `i `ui `ux -> -> # *U &U _fecha `ui `ux `i -> 15 `i `uc ]
-"293
-[; ;main.c: 293:     Write_Byte_To_DS1307_RTC(4,DIA);
+"504
+[; ;main.c: 504:     Write_Byte_To_DS1307_RTC(4, DIA);
 [e ( _Write_Byte_To_DS1307_RTC (2 , -> -> 4 `i `uc -> _DIA `uc ]
-"295
-[; ;main.c: 295:     char MES = (fecha[2]<<4) + (fecha[3]&0x0F);
+"506
+[; ;main.c: 506:     char MES = (fecha[2] << 4) + (fecha[3]&0x0F);
 [v _MES `uc ~T0 @X0 1 a ]
 [e = _MES -> + << -> *U + &U _fecha * -> -> -> 2 `i `ui `ux -> -> # *U &U _fecha `ui `ux `i -> 4 `i & -> *U + &U _fecha * -> -> -> 3 `i `ui `ux -> -> # *U &U _fecha `ui `ux `i -> 15 `i `uc ]
-"296
-[; ;main.c: 296:     Write_Byte_To_DS1307_RTC(5,MES);
+"507
+[; ;main.c: 507:     Write_Byte_To_DS1307_RTC(5, MES);
 [e ( _Write_Byte_To_DS1307_RTC (2 , -> -> 5 `i `uc -> _MES `uc ]
-"298
-[; ;main.c: 298:     char ANNO = (fecha[4]<<4) + (fecha[5]&0x0F);
+"509
+[; ;main.c: 509:     char ANNO = (fecha[4] << 4) + (fecha[5]&0x0F);
 [v _ANNO `uc ~T0 @X0 1 a ]
 [e = _ANNO -> + << -> *U + &U _fecha * -> -> -> 4 `i `ui `ux -> -> # *U &U _fecha `ui `ux `i -> 4 `i & -> *U + &U _fecha * -> -> -> 5 `i `ui `ux -> -> # *U &U _fecha `ui `ux `i -> 15 `i `uc ]
-"299
-[; ;main.c: 299:     Write_Byte_To_DS1307_RTC(6,ANNO);
+"510
+[; ;main.c: 510:     Write_Byte_To_DS1307_RTC(6, ANNO);
 [e ( _Write_Byte_To_DS1307_RTC (2 , -> -> 6 `i `uc -> _ANNO `uc ]
-"301
-[; ;main.c: 301: }
-[e :UE 235 ]
+"512
+[; ;main.c: 512: }
+[e :UE 291 ]
 }
-"305
-[; ;main.c: 305: void ESCRIBA_SEE(char addr, char dato)
-[v _ESCRIBA_SEE `(v ~T0 @X0 1 ef2`uc`uc ]
-"306
-[; ;main.c: 306: {
-{
-[e :U _ESCRIBA_SEE ]
-"305
-[; ;main.c: 305: void ESCRIBA_SEE(char addr, char dato)
-[v _addr `uc ~T0 @X0 1 r1 ]
-[v _dato `uc ~T0 @X0 1 r2 ]
-"306
-[; ;main.c: 306: {
-[f ]
-"309
-[; ;main.c: 309:     I2C_Start();
-[e ( _I2C_Start ..  ]
-"312
-[; ;main.c: 312:     while(I2C_Write_Byte(0xA0 + 0) == 1)
-[e $U 252  ]
-[e :U 253 ]
-"313
-[; ;main.c: 313:     { I2C_Start(); }
-{
-[e ( _I2C_Start ..  ]
-}
-[e :U 252 ]
-"312
-[; ;main.c: 312:     while(I2C_Write_Byte(0xA0 + 0) == 1)
-[e $ == -> ( _I2C_Write_Byte (1 -> + -> 160 `i -> 0 `i `uc `i -> 1 `i 253  ]
-[e :U 254 ]
-"315
-[; ;main.c: 315:     I2C_Write_Byte(0);
-[e ( _I2C_Write_Byte (1 -> -> 0 `i `uc ]
-"316
-[; ;main.c: 316:     I2C_Write_Byte(addr);
-[e ( _I2C_Write_Byte (1 -> _addr `uc ]
-"317
-[; ;main.c: 317:     I2C_Write_Byte(dato);
-[e ( _I2C_Write_Byte (1 -> _dato `uc ]
-"318
-[; ;main.c: 318:     I2C_Stop();
-[e ( _I2C_Stop ..  ]
-"319
-[; ;main.c: 319: }
-[e :UE 251 ]
-}
-"323
-[; ;main.c: 323: char LEA_SEE(char Address)
+"516
+[; ;main.c: 516: char LEA_SEE(char Address)
 [v _LEA_SEE `(uc ~T0 @X0 1 ef1`uc ]
-"325
-[; ;main.c: 325: {
+"517
+[; ;main.c: 517:  {
 {
 [e :U _LEA_SEE ]
-"323
-[; ;main.c: 323: char LEA_SEE(char Address)
+"516
+[; ;main.c: 516: char LEA_SEE(char Address)
 [v _Address `uc ~T0 @X0 1 r1 ]
-"325
-[; ;main.c: 325: {
+"517
+[; ;main.c: 517:  {
 [f ]
-"326
-[; ;main.c: 326:     unsigned char Byte = 0;
+"518
+[; ;main.c: 518:     unsigned char Byte = 0;
 [v _Byte `uc ~T0 @X0 1 a ]
 [e = _Byte -> -> 0 `i `uc ]
-"328
-[; ;main.c: 328:     I2C_Start();
+"520
+[; ;main.c: 520:     I2C_Start();
 [e ( _I2C_Start ..  ]
-"330
-[; ;main.c: 330:     while (I2C_Write_Byte(0xA0 + 0) == 1)
-[e $U 256  ]
-[e :U 257 ]
-"331
-[; ;main.c: 331:     { I2C_Start(); }
+"522
+[; ;main.c: 522:     while (I2C_Write_Byte(0xA0 + 0) == 1) {
+[e $U 308  ]
+[e :U 309 ]
 {
+"523
+[; ;main.c: 523:         I2C_Start();
 [e ( _I2C_Start ..  ]
+"524
+[; ;main.c: 524:     }
 }
-[e :U 256 ]
-"330
-[; ;main.c: 330:     while (I2C_Write_Byte(0xA0 + 0) == 1)
-[e $ == -> ( _I2C_Write_Byte (1 -> + -> 160 `i -> 0 `i `uc `i -> 1 `i 257  ]
-[e :U 258 ]
-"333
-[; ;main.c: 333:     I2C_Write_Byte(0);
+[e :U 308 ]
+"522
+[; ;main.c: 522:     while (I2C_Write_Byte(0xA0 + 0) == 1) {
+[e $ == -> ( _I2C_Write_Byte (1 -> + -> 160 `i -> 0 `i `uc `i -> 1 `i 309  ]
+[e :U 310 ]
+"526
+[; ;main.c: 526:     I2C_Write_Byte(0);
 [e ( _I2C_Write_Byte (1 -> -> 0 `i `uc ]
-"334
-[; ;main.c: 334:     I2C_Write_Byte(Address);
+"527
+[; ;main.c: 527:     I2C_Write_Byte(Address);
 [e ( _I2C_Write_Byte (1 -> _Address `uc ]
-"335
-[; ;main.c: 335:     I2C_ReStart();
+"528
+[; ;main.c: 528:     I2C_ReStart();
 [e ( _I2C_ReStart ..  ]
-"337
-[; ;main.c: 337:     I2C_Write_Byte(0xA0 + 1);
+"530
+[; ;main.c: 530:     I2C_Write_Byte(0xA0 + 1);
 [e ( _I2C_Write_Byte (1 -> + -> 160 `i -> 1 `i `uc ]
-"339
-[; ;main.c: 339:     Byte = I2C_Read_Byte();
+"532
+[; ;main.c: 532:     Byte = I2C_Read_Byte();
 [e = _Byte ( _I2C_Read_Byte ..  ]
-"341
-[; ;main.c: 341:     I2C_Send_NACK();
+"534
+[; ;main.c: 534:     I2C_Send_NACK();
 [e ( _I2C_Send_NACK ..  ]
-"342
-[; ;main.c: 342:     I2C_Stop();
+"535
+[; ;main.c: 535:     I2C_Stop();
 [e ( _I2C_Stop ..  ]
-"344
-[; ;main.c: 344:     return Byte;
+"537
+[; ;main.c: 537:     return Byte;
 [e ) -> _Byte `uc ]
-[e $UE 255  ]
-"345
-[; ;main.c: 345: }
-[e :UE 255 ]
+[e $UE 307  ]
+"538
+[; ;main.c: 538: }
+[e :UE 307 ]
+}
+"543
+[; ;main.c: 543: void deco_dia(char sel) {
+[v _deco_dia `(v ~T0 @X0 1 ef1`uc ]
+{
+[e :U _deco_dia ]
+[v _sel `uc ~T0 @X0 1 r1 ]
+[f ]
+"544
+[; ;main.c: 544:     switch (sel) {
+[e $U 313  ]
+{
+"545
+[; ;main.c: 545:         case 0:
+[e :U 314 ]
+"546
+[; ;main.c: 546:             SEND_MSJ(0xC0, "Lunes");
+[e ( _SEND_MSJ (2 , -> -> 192 `i `uc :s 23C ]
+"547
+[; ;main.c: 547:             return;
+[e $UE 311  ]
+"548
+[; ;main.c: 548:             break;
+[e $U 312  ]
+"549
+[; ;main.c: 549:         case 1:
+[e :U 315 ]
+"550
+[; ;main.c: 550:             SEND_MSJ(0xC0, "Martes");
+[e ( _SEND_MSJ (2 , -> -> 192 `i `uc :s 24C ]
+"551
+[; ;main.c: 551:             return;
+[e $UE 311  ]
+"552
+[; ;main.c: 552:             break;
+[e $U 312  ]
+"553
+[; ;main.c: 553:         case 2:
+[e :U 316 ]
+"554
+[; ;main.c: 554:             SEND_MSJ(0xC0, "Miercoles");
+[e ( _SEND_MSJ (2 , -> -> 192 `i `uc :s 25C ]
+"555
+[; ;main.c: 555:             return;
+[e $UE 311  ]
+"556
+[; ;main.c: 556:             break;
+[e $U 312  ]
+"557
+[; ;main.c: 557:         case 3:
+[e :U 317 ]
+"558
+[; ;main.c: 558:             SEND_MSJ(0xC0, "Jueves");
+[e ( _SEND_MSJ (2 , -> -> 192 `i `uc :s 26C ]
+"559
+[; ;main.c: 559:             return;
+[e $UE 311  ]
+"560
+[; ;main.c: 560:             break;
+[e $U 312  ]
+"561
+[; ;main.c: 561:         case 4:
+[e :U 318 ]
+"562
+[; ;main.c: 562:             SEND_MSJ(0xC0, "Viernes");
+[e ( _SEND_MSJ (2 , -> -> 192 `i `uc :s 27C ]
+"563
+[; ;main.c: 563:             return;
+[e $UE 311  ]
+"564
+[; ;main.c: 564:             break;
+[e $U 312  ]
+"565
+[; ;main.c: 565:         case 5:
+[e :U 319 ]
+"566
+[; ;main.c: 566:             SEND_MSJ(0xC0, "Sabado");
+[e ( _SEND_MSJ (2 , -> -> 192 `i `uc :s 28C ]
+"567
+[; ;main.c: 567:             return;
+[e $UE 311  ]
+"568
+[; ;main.c: 568:             break;
+[e $U 312  ]
+"569
+[; ;main.c: 569:         case 6:
+[e :U 320 ]
+"570
+[; ;main.c: 570:             SEND_MSJ(0xC0, "Domingo");
+[e ( _SEND_MSJ (2 , -> -> 192 `i `uc :s 29C ]
+"571
+[; ;main.c: 571:             return;
+[e $UE 311  ]
+"572
+[; ;main.c: 572:             break;
+[e $U 312  ]
+"573
+[; ;main.c: 573:         default:
+[e :U 321 ]
+"574
+[; ;main.c: 574:             return;
+[e $UE 311  ]
+"575
+[; ;main.c: 575:             break;
+[e $U 312  ]
+"576
+[; ;main.c: 576:     }
+}
+[e $U 312  ]
+[e :U 313 ]
+[e [\ -> _sel `i , $ -> 0 `i 314
+ , $ -> 1 `i 315
+ , $ -> 2 `i 316
+ , $ -> 3 `i 317
+ , $ -> 4 `i 318
+ , $ -> 5 `i 319
+ , $ -> 6 `i 320
+ 321 ]
+[e :U 312 ]
+"577
+[; ;main.c: 577: }
+[e :UE 311 ]
+}
+"579
+[; ;main.c: 579: void anti_r() {
+[v _anti_r `(v ~T0 @X0 1 ef ]
+{
+[e :U _anti_r ]
+[f ]
+"580
+[; ;main.c: 580:     char Car;
+[v _Car `uc ~T0 @X0 1 a ]
+"581
+[; ;main.c: 581:     while (Car != 'r') {
+[e $U 323  ]
+[e :U 324 ]
+{
+"582
+[; ;main.c: 582:         if (PIR1bits.RCIF == 1) {
+[e $ ! == -> . . _PIR1bits 0 5 `i -> 1 `i 326  ]
+{
+"584
+[; ;main.c: 584:             Car = RCREG;
+[e = _Car -> _RCREG `uc ]
+"585
+[; ;main.c: 585:             PIR1bits.RCIF = 0;
+[e = . . _PIR1bits 0 5 -> -> 0 `i `uc ]
+"586
+[; ;main.c: 586:         }
+}
+[e :U 326 ]
+"587
+[; ;main.c: 587:     }
+}
+[e :U 323 ]
+"581
+[; ;main.c: 581:     while (Car != 'r') {
+[e $ != -> _Car `ui -> 114 `ui 324  ]
+[e :U 325 ]
+"588
+[; ;main.c: 588:     return;
+[e $UE 322  ]
+"589
+[; ;main.c: 589: }
+[e :UE 322 ]
+}
+"590
+[; ;main.c: 590: void Buzz_on(){
+[v _Buzz_on `(v ~T0 @X0 1 ef ]
+{
+[e :U _Buzz_on ]
+[f ]
+"591
+[; ;main.c: 591:     PORTCbits.RC5=0;
+[e = . . _PORTCbits 0 5 -> -> 0 `i `uc ]
+"592
+[; ;main.c: 592: }
+[e :UE 327 ]
+}
+"593
+[; ;main.c: 593: void Buzz_off(){
+[v _Buzz_off `(v ~T0 @X0 1 ef ]
+{
+[e :U _Buzz_off ]
+[f ]
+"594
+[; ;main.c: 594:     PORTCbits.RC5=1;
+[e = . . _PORTCbits 0 5 -> -> 1 `i `uc ]
+"595
+[; ;main.c: 595: }
+[e :UE 328 ]
+}
+"596
+[; ;main.c: 596: void melodia(){
+[v _melodia `(v ~T0 @X0 1 ef ]
+{
+[e :U _melodia ]
+[f ]
+"598
+[; ;main.c: 598:     Buzz_on();
+[e ( _Buzz_on ..  ]
+"599
+[; ;main.c: 599:     _delay((unsigned long)((300)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 300 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"600
+[; ;main.c: 600:     Buzz_off();
+[e ( _Buzz_off ..  ]
+"601
+[; ;main.c: 601:     _delay((unsigned long)((700)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 700 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"602
+[; ;main.c: 602: }
+[e :UE 329 ]
 }
 [v $root$_main `(v ~T0 @X0 0 e ]
-"349
-[; ;main.c: 349: void main(void)
+"604
+[; ;main.c: 604: void main(void) {
 [v _main `(v ~T0 @X0 1 ef ]
-"350
-[; ;main.c: 350: {
 {
 [e :U _main ]
 [f ]
-"351
-[; ;main.c: 351:     char Car;
+"605
+[; ;main.c: 605:     char Car;
 [v _Car `uc ~T0 @X0 1 a ]
-"352
-[; ;main.c: 352:     MCU_Init();
+"606
+[; ;main.c: 606:     MCU_Init();
 [e ( _MCU_Init ..  ]
-"353
-[; ;main.c: 353:     LCD_Init();
+"607
+[; ;main.c: 607:     LCD_Init();
 [e ( _LCD_Init ..  ]
-"354
-[; ;main.c: 354:     UART_Init();
+"608
+[; ;main.c: 608:     UART_Init();
 [e ( _UART_Init ..  ]
-"355
-[; ;main.c: 355:     InitI2C();
+"609
+[; ;main.c: 609:     InitI2C();
 [e ( _InitI2C ..  ]
-"357
-[; ;main.c: 357:     EscribeCadenaLCD("MPEI 2020-i + I2C");
-[e ( _EscribeCadenaLCD (1 :s 6C ]
-"359
-[; ;main.c: 359:     SEND_CMD(0x80 + 64);
-[e ( _SEND_CMD (1 -> + -> 128 `i -> 64 `i `uc ]
-"360
-[; ;main.c: 360:     EscribeCadenaLCD(" +++ RTC DS1307 +++");
-[e ( _EscribeCadenaLCD (1 :s 7C ]
-"362
-[; ;main.c: 362:     SEND_CMD(0x80+20);
-[e ( _SEND_CMD (1 -> + -> 128 `i -> 20 `i `uc ]
-"363
-[; ;main.c: 363:     EscribeCadenaLCD("Lectura y escritura");
-[e ( _EscribeCadenaLCD (1 :s 8C ]
-"365
-[; ;main.c: 365:     SEND_CMD(0x80+84);
-[e ( _SEND_CMD (1 -> + -> 128 `i -> 84 `i `uc ]
-"366
-[; ;main.c: 366:     EscribeCadenaLCD("DEL MODULO RTC:...");
-[e ( _EscribeCadenaLCD (1 :s 9C ]
-"368
-[; ;main.c: 368:     _delay((unsigned long)((2000)*(4000000/4000.0)));
+"611
+[; ;main.c: 611:     SEND_MSJ(0x80,"MPEI LAB 6");
+[e ( _SEND_MSJ (2 , -> -> 128 `i `uc :s 30C ]
+"613
+[; ;main.c: 613:     SEND_MSJ(0xC0 , "    RTC DS1307   ");
+[e ( _SEND_MSJ (2 , -> -> 192 `i `uc :s 31C ]
+"615
+[; ;main.c: 615:     SEND_MSJ(0x80 + 20, "Lectura y escritura");
+[e ( _SEND_MSJ (2 , -> + -> 128 `i -> 20 `i `uc :s 32C ]
+"617
+[; ;main.c: 617:     SEND_MSJ(0xC0 + 20, "ALARMAS EEPROM");
+[e ( _SEND_MSJ (2 , -> + -> 192 `i -> 20 `i `uc :s 33C ]
+"619
+[; ;main.c: 619:     _delay((unsigned long)((2000)*(4000000/4000.0)));
 [e ( __delay (1 -> * -> -> 2000 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"370
-[; ;main.c: 370:     SEND_CMD(1);
+"621
+[; ;main.c: 621:     SEND_CMD(1);
 [e ( _SEND_CMD (1 -> -> 1 `i `uc ]
-"372
-[; ;main.c: 372:     while(1)
-[e :U 261 ]
-"373
-[; ;main.c: 373:     {
+"622
+[; ;main.c: 622:     MSG_Term("Hasta acá llegué");
+[e ( _MSG_Term (1 :s 34C ]
+"623
+[; ;main.c: 623:     while (1) {
+[e :U 332 ]
 {
-"374
-[; ;main.c: 374:         SEND_CMD(0x80+0);
-[e ( _SEND_CMD (1 -> + -> 128 `i -> 0 `i `uc ]
-"376
-[; ;main.c: 376:         Car = Read_Byte_From_DS1307_RTC(2);
-[e = _Car -> ( _Read_Byte_From_DS1307_RTC (1 -> -> 2 `i `uc `uc ]
-"377
-[; ;main.c: 377:         SEND_CHAR(((Car>>4) & 0x0F)+0x30);
-[e ( _SEND_CHAR (1 -> + & >> -> _Car `i -> 4 `i -> 15 `i -> 48 `i `uc ]
-"378
-[; ;main.c: 378:         SEND_CHAR((Car & 0x0F) + 0x30);
-[e ( _SEND_CHAR (1 -> + & -> _Car `i -> 15 `i -> 48 `i `uc ]
-"380
-[; ;main.c: 380:         SEND_CHAR(':');
-[e ( _SEND_CHAR (1 -> -> 58 `ui `uc ]
-"382
-[; ;main.c: 382:         Car = Read_Byte_From_DS1307_RTC(1);
-[e = _Car -> ( _Read_Byte_From_DS1307_RTC (1 -> -> 1 `i `uc `uc ]
-"383
-[; ;main.c: 383:         SEND_CHAR(((Car>>4) & 0x0F)+0x30);
-[e ( _SEND_CHAR (1 -> + & >> -> _Car `i -> 4 `i -> 15 `i -> 48 `i `uc ]
-"384
-[; ;main.c: 384:         SEND_CHAR((Car & 0x0F) + 0x30);
-[e ( _SEND_CHAR (1 -> + & -> _Car `i -> 15 `i -> 48 `i `uc ]
-"386
-[; ;main.c: 386:         SEND_CHAR(':');
-[e ( _SEND_CHAR (1 -> -> 58 `ui `uc ]
-"388
-[; ;main.c: 388:         Car = Read_Byte_From_DS1307_RTC(0);
-[e = _Car -> ( _Read_Byte_From_DS1307_RTC (1 -> -> 0 `i `uc `uc ]
-"389
-[; ;main.c: 389:         SEND_CHAR(((Car>>4) & 0x0F)+0x30);
-[e ( _SEND_CHAR (1 -> + & >> -> _Car `i -> 4 `i -> 15 `i -> 48 `i `uc ]
-"390
-[; ;main.c: 390:         SEND_CHAR((Car & 0x0F) + 0x30);
-[e ( _SEND_CHAR (1 -> + & -> _Car `i -> 15 `i -> 48 `i `uc ]
-"392
-[; ;main.c: 392:         SEND_CMD(0xC0);
-[e ( _SEND_CMD (1 -> -> 192 `i `uc ]
-"394
-[; ;main.c: 394:         Car = Read_Byte_From_DS1307_RTC(4);
-[e = _Car -> ( _Read_Byte_From_DS1307_RTC (1 -> -> 4 `i `uc `uc ]
-"395
-[; ;main.c: 395:         SEND_CHAR(((Car>>4) & 0x03)+0x30);
-[e ( _SEND_CHAR (1 -> + & >> -> _Car `i -> 4 `i -> 3 `i -> 48 `i `uc ]
-"396
-[; ;main.c: 396:         SEND_CHAR((Car & 0x0F) + 0x30);
-[e ( _SEND_CHAR (1 -> + & -> _Car `i -> 15 `i -> 48 `i `uc ]
-"398
-[; ;main.c: 398:         SEND_CHAR('/');
-[e ( _SEND_CHAR (1 -> -> 47 `ui `uc ]
-"400
-[; ;main.c: 400:         Car = Read_Byte_From_DS1307_RTC(5);
-[e = _Car -> ( _Read_Byte_From_DS1307_RTC (1 -> -> 5 `i `uc `uc ]
-"401
-[; ;main.c: 401:         switch(Car)
-[e $U 264  ]
-"402
-[; ;main.c: 402:         {
+"624
+[; ;main.c: 624:         if (PIR1bits.RCIF == 1) {
+[e $ ! == -> . . _PIR1bits 0 5 `i -> 1 `i 334  ]
 {
-"403
-[; ;main.c: 403:             case 1:
-[e :U 265 ]
-"404
-[; ;main.c: 404:                 EscribeCadenaLCD("ENE");
-[e ( _EscribeCadenaLCD (1 :s 10C ]
-"405
-[; ;main.c: 405:                 break;
-[e $U 263  ]
-"406
-[; ;main.c: 406:             case 2:
-[e :U 266 ]
-"407
-[; ;main.c: 407:                 EscribeCadenaLCD("FEB");
-[e ( _EscribeCadenaLCD (1 :s 11C ]
-"408
-[; ;main.c: 408:                 break;
-[e $U 263  ]
-"409
-[; ;main.c: 409:             case 3:
-[e :U 267 ]
-"410
-[; ;main.c: 410:                 EscribeCadenaLCD("MAR");
-[e ( _EscribeCadenaLCD (1 :s 12C ]
-"411
-[; ;main.c: 411:                 break;
-[e $U 263  ]
-"412
-[; ;main.c: 412:             case 4:
-[e :U 268 ]
-"413
-[; ;main.c: 413:                 EscribeCadenaLCD("ABR");
-[e ( _EscribeCadenaLCD (1 :s 13C ]
-"414
-[; ;main.c: 414:                 break;
-[e $U 263  ]
-"415
-[; ;main.c: 415:             case 5:
-[e :U 269 ]
-"416
-[; ;main.c: 416:                 EscribeCadenaLCD("MAY");
-[e ( _EscribeCadenaLCD (1 :s 14C ]
-"417
-[; ;main.c: 417:                 break;
-[e $U 263  ]
-"418
-[; ;main.c: 418:             case 6:
-[e :U 270 ]
-"419
-[; ;main.c: 419:                 EscribeCadenaLCD("JUN");
-[e ( _EscribeCadenaLCD (1 :s 15C ]
-"420
-[; ;main.c: 420:                 break;
-[e $U 263  ]
-"421
-[; ;main.c: 421:             case 7:
-[e :U 271 ]
-"422
-[; ;main.c: 422:                 EscribeCadenaLCD("JUL");
-[e ( _EscribeCadenaLCD (1 :s 16C ]
-"423
-[; ;main.c: 423:                 break;
-[e $U 263  ]
-"424
-[; ;main.c: 424:             case 8:
-[e :U 272 ]
-"425
-[; ;main.c: 425:                 EscribeCadenaLCD("AGO");
-[e ( _EscribeCadenaLCD (1 :s 17C ]
-"426
-[; ;main.c: 426:                 break;
-[e $U 263  ]
-"427
-[; ;main.c: 427:             case 9:
-[e :U 273 ]
-"428
-[; ;main.c: 428:                 EscribeCadenaLCD("SEP");
-[e ( _EscribeCadenaLCD (1 :s 18C ]
-"429
-[; ;main.c: 429:                 break;
-[e $U 263  ]
-"430
-[; ;main.c: 430:             case 0x10:
-[e :U 274 ]
-"431
-[; ;main.c: 431:                 EscribeCadenaLCD("OCT");
-[e ( _EscribeCadenaLCD (1 :s 19C ]
-"432
-[; ;main.c: 432:                 break;
-[e $U 263  ]
-"433
-[; ;main.c: 433:             case 0x11:
-[e :U 275 ]
-"434
-[; ;main.c: 434:                 EscribeCadenaLCD("NOV");
-[e ( _EscribeCadenaLCD (1 :s 20C ]
-"435
-[; ;main.c: 435:                 break;
-[e $U 263  ]
-"436
-[; ;main.c: 436:             case 0x12:
-[e :U 276 ]
-"437
-[; ;main.c: 437:                 EscribeCadenaLCD("DIC");
-[e ( _EscribeCadenaLCD (1 :s 21C ]
-"438
-[; ;main.c: 438:                 break;
-[e $U 263  ]
-"439
-[; ;main.c: 439:             default:
-[e :U 277 ]
-"440
-[; ;main.c: 440:                 SEND_CHAR(((Car>>4) & 0x0F) + 0x30);
-[e ( _SEND_CHAR (1 -> + & >> -> _Car `i -> 4 `i -> 15 `i -> 48 `i `uc ]
-"441
-[; ;main.c: 441:                 SEND_CHAR((Car & 0x0F) + 0x30);
-[e ( _SEND_CHAR (1 -> + & -> _Car `i -> 15 `i -> 48 `i `uc ]
-"442
-[; ;main.c: 442:                 break;
-[e $U 263  ]
-"444
-[; ;main.c: 444:         }
-}
-[e $U 263  ]
-[e :U 264 ]
-[e [\ -> _Car `i , $ -> 1 `i 265
- , $ -> 2 `i 266
- , $ -> 3 `i 267
- , $ -> 4 `i 268
- , $ -> 5 `i 269
- , $ -> 6 `i 270
- , $ -> 7 `i 271
- , $ -> 8 `i 272
- , $ -> 9 `i 273
- , $ -> 16 `i 274
- , $ -> 17 `i 275
- , $ -> 18 `i 276
- 277 ]
-[e :U 263 ]
-"446
-[; ;main.c: 446:         SEND_CHAR('/');
-[e ( _SEND_CHAR (1 -> -> 47 `ui `uc ]
-"448
-[; ;main.c: 448:         Car = Read_Byte_From_DS1307_RTC(6);
-[e = _Car -> ( _Read_Byte_From_DS1307_RTC (1 -> -> 6 `i `uc `uc ]
-"449
-[; ;main.c: 449:         SEND_CHAR(((Car >> 4) & 0x0F) + 0x30);
-[e ( _SEND_CHAR (1 -> + & >> -> _Car `i -> 4 `i -> 15 `i -> 48 `i `uc ]
-"450
-[; ;main.c: 450:         SEND_CHAR((Car & 0x0F) + 0x30);
-[e ( _SEND_CHAR (1 -> + & -> _Car `i -> 15 `i -> 48 `i `uc ]
-"452
-[; ;main.c: 452:         if(PIR1bits.RCIF == 1)
-[e $ ! == -> . . _PIR1bits 0 5 `i -> 1 `i 278  ]
-"453
-[; ;main.c: 453:             {
-{
-"454
-[; ;main.c: 454:                 Car = RCREG;
+"625
+[; ;main.c: 625:             Car = RCREG;
 [e = _Car -> _RCREG `uc ]
-"455
-[; ;main.c: 455:                 PIR1bits.RCIF = 0;
+"626
+[; ;main.c: 626:             PIR1bits.RCIF = 0;
 [e = . . _PIR1bits 0 5 -> -> 0 `i `uc ]
-"456
-[; ;main.c: 456:                 if(Car == 'H') RecibeHHMM();
-[e $ ! == -> _Car `ui -> 72 `ui 279  ]
-[e ( _RecibeHHMM ..  ]
-[e :U 279 ]
-"457
-[; ;main.c: 457:             }
-}
-[e :U 278 ]
-"459
-[; ;main.c: 459:         _delay((unsigned long)((100)*(4000000/4000.0)));
-[e ( __delay (1 -> * -> -> 100 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"461
-[; ;main.c: 461:         char a = TECLADO();
-[v _a `uc ~T0 @X0 1 a ]
-[e = _a ( _TECLADO ..  ]
-"462
-[; ;main.c: 462:         if(a == 0x0D)
-[e $ ! == -> _a `i -> 13 `i 280  ]
-"463
-[; ;main.c: 463:         {
+"627
+[; ;main.c: 627:             MSG_Term("Hasta acá llegué");
+[e ( _MSG_Term (1 :s 35C ]
+"629
+[; ;main.c: 629:         switch (Car){
+[e $U 336  ]
 {
-"465
-[; ;main.c: 465:             ESCRIBA_SEE(0x07,'D');
-[e ( _ESCRIBA_SEE (2 , -> -> 7 `i `uc -> -> 68 `ui `uc ]
-"466
-[; ;main.c: 466:             _delay((unsigned long)((10)*(4000000/4000.0)));
-[e ( __delay (1 -> * -> -> 10 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
-"467
-[; ;main.c: 467:             a = LEA_SEE(0x07);
-[e = _a ( _LEA_SEE (1 -> -> 7 `i `uc ]
-"468
-[; ;main.c: 468:             SEND_CMD(0x80 + 20);
-[e ( _SEND_CMD (1 -> + -> 128 `i -> 20 `i `uc ]
-"469
-[; ;main.c: 469:             SEND_CHAR(a);
-[e ( _SEND_CHAR (1 _a ]
-"470
-[; ;main.c: 470:         }
+"630
+[; ;main.c: 630:             case '1':
+[e :U 337 ]
+"631
+[; ;main.c: 631:                 anti_r();
+[e ( _anti_r ..  ]
+"632
+[; ;main.c: 632:                 RecibeALARMAS(0);
+[e ( _RecibeALARMAS (1 -> -> 0 `i `uc ]
+"633
+[; ;main.c: 633:                 MSG_Term("1");
+[e ( _MSG_Term (1 :s 36C ]
+"635
+[; ;main.c: 635:             case '2':
+[e :U 338 ]
+"636
+[; ;main.c: 636:                 anti_r();
+[e ( _anti_r ..  ]
+"637
+[; ;main.c: 637:                 RecibeALARMAS(8);
+[e ( _RecibeALARMAS (1 -> -> 8 `i `uc ]
+"639
+[; ;main.c: 639:             case '3':
+[e :U 339 ]
+"640
+[; ;main.c: 640:                 anti_r();
+[e ( _anti_r ..  ]
+"641
+[; ;main.c: 641:                 RecibeALARMAS(16);
+[e ( _RecibeALARMAS (1 -> -> 16 `i `uc ]
+"642
+[; ;main.c: 642:             case '4':
+[e :U 340 ]
+"643
+[; ;main.c: 643:                 anti_r();
+[e ( _anti_r ..  ]
+"644
+[; ;main.c: 644:                 RecibeALARMAS(24);
+[e ( _RecibeALARMAS (1 -> -> 24 `i `uc ]
+"645
+[; ;main.c: 645:             case '5':
+[e :U 341 ]
+"646
+[; ;main.c: 646:                 anti_r();
+[e ( _anti_r ..  ]
+"647
+[; ;main.c: 647:                 RecibeALARMAS(32);
+[e ( _RecibeALARMAS (1 -> -> 32 `i `uc ]
+"648
+[; ;main.c: 648:             case '6':
+[e :U 342 ]
+"649
+[; ;main.c: 649:                 anti_r();
+[e ( _anti_r ..  ]
+"650
+[; ;main.c: 650:                 RecibeALARMAS(40);
+[e ( _RecibeALARMAS (1 -> -> 40 `i `uc ]
+"651
+[; ;main.c: 651:             case '7':
+[e :U 343 ]
+"652
+[; ;main.c: 652:                 anti_r();
+[e ( _anti_r ..  ]
+"653
+[; ;main.c: 653:                 RecibeALARMAS(48);
+[e ( _RecibeALARMAS (1 -> -> 48 `i `uc ]
+"654
+[; ;main.c: 654:             case '8':
+[e :U 344 ]
+"655
+[; ;main.c: 655:                 anti_r();
+[e ( _anti_r ..  ]
+"656
+[; ;main.c: 656:                 RecibeALARMAS(56);
+[e ( _RecibeALARMAS (1 -> -> 56 `i `uc ]
+"657
+[; ;main.c: 657:             case '9':
+[e :U 345 ]
+"658
+[; ;main.c: 658:                 anti_r();
+[e ( _anti_r ..  ]
+"659
+[; ;main.c: 659:                 RecibeALARMAS(64);
+[e ( _RecibeALARMAS (1 -> -> 64 `i `uc ]
+"660
+[; ;main.c: 660:             case '0':
+[e :U 346 ]
+"661
+[; ;main.c: 661:                 anti_r();
+[e ( _anti_r ..  ]
+"662
+[; ;main.c: 662:                 RecibeALARMAS(72);
+[e ( _RecibeALARMAS (1 -> -> 72 `i `uc ]
+"663
+[; ;main.c: 663:             }
 }
-[e :U 280 ]
-"471
-[; ;main.c: 471:     }
+[e $U 335  ]
+[e :U 336 ]
+[e [\ -> _Car `i , $ -> -> 49 `ui `i 337
+ , $ -> -> 50 `ui `i 338
+ , $ -> -> 51 `ui `i 339
+ , $ -> -> 52 `ui `i 340
+ , $ -> -> 53 `ui `i 341
+ , $ -> -> 54 `ui `i 342
+ , $ -> -> 55 `ui `i 343
+ , $ -> -> 56 `ui `i 344
+ , $ -> -> 57 `ui `i 345
+ , $ -> -> 48 `ui `i 346
+ 335 ]
+[e :U 335 ]
+"664
+[; ;main.c: 664:         }
 }
-[e :U 260 ]
-[e $U 261  ]
-[e :U 262 ]
-"472
-[; ;main.c: 472: }
-[e :UE 259 ]
+[e :U 334 ]
+"667
+[; ;main.c: 667:         SEND_CMD(0x80+0);
+[e ( _SEND_CMD (1 -> + -> 128 `i -> 0 `i `uc ]
+"669
+[; ;main.c: 669:         Car = Read_Byte_From_DS1307_RTC(2);
+[e = _Car -> ( _Read_Byte_From_DS1307_RTC (1 -> -> 2 `i `uc `uc ]
+"670
+[; ;main.c: 670:         SEND_CHAR(((Car>>4) & 0x0F)+0x30);
+[e ( _SEND_CHAR (1 -> + & >> -> _Car `i -> 4 `i -> 15 `i -> 48 `i `uc ]
+"671
+[; ;main.c: 671:         SEND_CHAR((Car & 0x0F) + 0x30);
+[e ( _SEND_CHAR (1 -> + & -> _Car `i -> 15 `i -> 48 `i `uc ]
+"673
+[; ;main.c: 673:         SEND_CHAR(':');
+[e ( _SEND_CHAR (1 -> -> 58 `ui `uc ]
+"675
+[; ;main.c: 675:         Car = Read_Byte_From_DS1307_RTC(1);
+[e = _Car -> ( _Read_Byte_From_DS1307_RTC (1 -> -> 1 `i `uc `uc ]
+"676
+[; ;main.c: 676:         SEND_CHAR(((Car>>4) & 0x0F)+0x30);
+[e ( _SEND_CHAR (1 -> + & >> -> _Car `i -> 4 `i -> 15 `i -> 48 `i `uc ]
+"677
+[; ;main.c: 677:         SEND_CHAR((Car & 0x0F) + 0x30);
+[e ( _SEND_CHAR (1 -> + & -> _Car `i -> 15 `i -> 48 `i `uc ]
+"679
+[; ;main.c: 679:         SEND_CHAR(':');
+[e ( _SEND_CHAR (1 -> -> 58 `ui `uc ]
+"681
+[; ;main.c: 681:         Car = Read_Byte_From_DS1307_RTC(0);
+[e = _Car -> ( _Read_Byte_From_DS1307_RTC (1 -> -> 0 `i `uc `uc ]
+"682
+[; ;main.c: 682:         SEND_CHAR(((Car>>4) & 0x0F)+0x30);
+[e ( _SEND_CHAR (1 -> + & >> -> _Car `i -> 4 `i -> 15 `i -> 48 `i `uc ]
+"683
+[; ;main.c: 683:         SEND_CHAR((Car & 0x0F) + 0x30);
+[e ( _SEND_CHAR (1 -> + & -> _Car `i -> 15 `i -> 48 `i `uc ]
+"685
+[; ;main.c: 685:         SEND_CMD(0xC0);
+[e ( _SEND_CMD (1 -> -> 192 `i `uc ]
+"687
+[; ;main.c: 687:         Car = Read_Byte_From_DS1307_RTC(4);
+[e = _Car -> ( _Read_Byte_From_DS1307_RTC (1 -> -> 4 `i `uc `uc ]
+"688
+[; ;main.c: 688:         SEND_CHAR(((Car>>4) & 0x03)+0x30);
+[e ( _SEND_CHAR (1 -> + & >> -> _Car `i -> 4 `i -> 3 `i -> 48 `i `uc ]
+"689
+[; ;main.c: 689:         SEND_CHAR((Car & 0x0F) + 0x30);
+[e ( _SEND_CHAR (1 -> + & -> _Car `i -> 15 `i -> 48 `i `uc ]
+"691
+[; ;main.c: 691:         SEND_CHAR('/');
+[e ( _SEND_CHAR (1 -> -> 47 `ui `uc ]
+"693
+[; ;main.c: 693:         Car = Read_Byte_From_DS1307_RTC(5);
+[e = _Car -> ( _Read_Byte_From_DS1307_RTC (1 -> -> 5 `i `uc `uc ]
+"695
+[; ;main.c: 695:         deco_mes(0xC0+4,(Car));
+[e ( _deco_mes (2 , -> + -> 192 `i -> 4 `i `uc _Car ]
+"696
+[; ;main.c: 696:         SEND_CHAR('/');
+[e ( _SEND_CHAR (1 -> -> 47 `ui `uc ]
+"698
+[; ;main.c: 698:         Car = Read_Byte_From_DS1307_RTC(6);
+[e = _Car -> ( _Read_Byte_From_DS1307_RTC (1 -> -> 6 `i `uc `uc ]
+"699
+[; ;main.c: 699:         SEND_CHAR(((Car >> 4) & 0x0F) + 0x30);
+[e ( _SEND_CHAR (1 -> + & >> -> _Car `i -> 4 `i -> 15 `i -> 48 `i `uc ]
+"700
+[; ;main.c: 700:         SEND_CHAR((Car & 0x0F) + 0x30);
+[e ( _SEND_CHAR (1 -> + & -> _Car `i -> 15 `i -> 48 `i `uc ]
+"703
+[; ;main.c: 703:         _delay((unsigned long)((1000)*(4000000/4000.0)));
+[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 4000000 `l `d .4000.0 `ul ]
+"706
+[; ;main.c: 706:     }
 }
-[a 8C 76 101 99 116 117 114 97 32 121 32 101 115 99 114 105 116 117 114 97 0 ]
-[a 14C 77 65 89 0 ]
-[a 20C 78 79 86 0 ]
-[a 19C 79 67 84 0 ]
-[a 13C 65 66 82 0 ]
-[a 12C 77 65 82 0 ]
-[a 18C 83 69 80 0 ]
-[a 17C 65 71 79 0 ]
-[a 15C 74 85 78 0 ]
-[a 16C 74 85 76 0 ]
-[a 10C 69 78 69 0 ]
-[a 21C 68 73 67 0 ]
-[a 6C 77 80 69 73 32 50 48 50 48 45 105 32 43 32 73 50 67 0 ]
-[a 11C 70 69 66 0 ]
-[a 2C 69 115 99 114 105 98 97 32 108 111 115 32 109 105 110 117 116 111 115 58 0 ]
+[e :U 331 ]
+[e $U 332  ]
+[e :U 333 ]
+"707
+[; ;main.c: 707: }
+[e :UE 330 ]
+}
+[a 26C 74 117 101 118 101 115 0 ]
+[a 24C 77 97 114 116 101 115 0 ]
+[a 23C 76 117 110 101 115 0 ]
+[a 27C 86 105 101 114 110 101 115 0 ]
+[a 25C 77 105 101 114 99 111 108 101 115 0 ]
+[a 29C 68 111 109 105 110 103 111 0 ]
+[a 28C 83 97 98 97 100 111 0 ]
+[a 18C 79 110 0 ]
+[a 19C 79 102 102 0 ]
+[a 32C 76 101 99 116 117 114 97 32 121 32 101 115 99 114 105 116 117 114 97 0 ]
+[a 7C 77 65 89 0 ]
+[a 13C 78 79 86 0 ]
+[a 12C 79 67 84 0 ]
+[a 6C 65 66 82 0 ]
+[a 5C 77 65 82 0 ]
+[a 11C 83 69 80 0 ]
+[a 10C 65 71 79 0 ]
+[a 8C 74 85 78 0 ]
+[a 33C 65 76 65 82 77 65 83 32 69 69 80 82 79 77 0 ]
+[a 16C 65 65 47 77 77 47 68 68 32 72 72 58 77 77 0 ]
+[a 2C 72 72 47 77 77 0 ]
+[a 9C 74 85 76 0 ]
+[a 3C 69 78 69 0 ]
+[a 14C 68 73 67 0 ]
+[a 4C 70 69 66 0 ]
 [a 1C 69 115 99 114 105 98 97 32 108 97 32 72 111 114 97 58 0 ]
-[a 4C 84 101 99 108 101 101 32 109 101 115 32 40 77 77 41 58 0 ]
-[a 3C 84 101 99 108 101 101 32 100 18446744073709551597 97 32 40 68 68 41 58 0 ]
-[a 5C 84 101 99 108 101 101 32 97 18446744073709551601 111 32 40 65 65 41 58 0 ]
-[a 9C 68 69 76 32 77 79 68 85 76 79 32 82 84 67 58 46 46 46 0 ]
-[a 7C 32 43 43 43 32 82 84 67 32 68 83 49 51 48 55 32 43 43 43 0 ]
+[a 21C 84 101 99 108 101 101 32 109 101 115 32 40 77 77 41 58 0 ]
+[a 20C 84 101 99 108 101 101 32 100 18446744073709551597 97 32 40 68 68 41 58 0 ]
+[a 22C 84 101 99 108 101 101 32 97 18446744073709551601 111 32 40 65 65 41 58 0 ]
+[a 30C 77 80 69 73 32 76 65 66 32 54 0 ]
+[a 36C 49 0 ]
+[a 17C 42 61 111 110 32 35 61 111 102 102 32 0 ]
+[a 15C 69 115 99 114 105 98 97 32 97 108 97 114 109 97 32 0 ]
+[a 31C 32 32 32 32 82 84 67 32 68 83 49 51 48 55 32 32 32 0 ]
+[a 34C 72 97 115 116 97 32 97 99 18446744073709551585 32 108 108 101 103 117 18446744073709551593 0 ]
+[a 35C 72 97 115 116 97 32 97 99 18446744073709551585 32 108 108 101 103 117 18446744073709551593 0 ]
